@@ -1,0 +1,507 @@
+/* =========================================================================
+   ANIMATIONS.CSS - Micro-interactions & Polissage Avancé
+   Chawarma Premium — Phase 4
+   ========================================================================= */
+
+/* =========================================================================
+   1. SCROLL PROGRESS BAR
+   ========================================================================= */
+#scrollProgressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 50%, var(--secondary) 100%);
+    z-index: 9999;
+    transition: width 0.1s linear;
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
+}
+
+/* =========================================================================
+   2. PAGE LOADER
+   ========================================================================= */
+#pageLoader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-main);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#pageLoader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-logo {
+    font-family: var(--font-titles);
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: loaderPulse 1.5s ease-in-out infinite;
+}
+
+.loader-logo i {
+    color: var(--primary);
+}
+
+.loader-logo span {
+    color: var(--primary);
+}
+
+@keyframes loaderPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.97); }
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(var(--primary-rgb), 0.2);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =========================================================================
+   3. SCROLL REVEAL ANIMATIONS
+   ========================================================================= */
+[data-reveal] {
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-reveal="fade-up"] {
+    transform: translateY(40px);
+}
+
+[data-reveal="fade-down"] {
+    transform: translateY(-40px);
+}
+
+[data-reveal="fade-left"] {
+    transform: translateX(40px);
+}
+
+[data-reveal="fade-right"] {
+    transform: translateX(-40px);
+}
+
+[data-reveal="zoom-in"] {
+    transform: scale(0.92);
+}
+
+[data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+}
+
+/* Délais en cascade pour les enfants */
+[data-reveal-delay="100"] { transition-delay: 0.1s; }
+[data-reveal-delay="200"] { transition-delay: 0.2s; }
+[data-reveal-delay="300"] { transition-delay: 0.3s; }
+[data-reveal-delay="400"] { transition-delay: 0.4s; }
+[data-reveal-delay="500"] { transition-delay: 0.5s; }
+[data-reveal-delay="600"] { transition-delay: 0.6s; }
+
+/* =========================================================================
+   4. TOAST NOTIFICATIONS (Remplacement des alert() natifs)
+   ========================================================================= */
+#toastContainer {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99998;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 12px;
+    align-items: center;
+    pointer-events: none;
+    width: calc(100% - 48px);
+    max-width: 420px;
+}
+
+.toast {
+    width: 100%;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-lg);
+    pointer-events: auto;
+    animation: toastSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.toast.hiding {
+    animation: toastSlideOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastSlideOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(10px) scale(0.96); }
+}
+
+.toast-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.toast.success .toast-icon {
+    background-color: rgba(46, 196, 182, 0.15);
+    color: #2ec4b6;
+}
+
+.toast.error .toast-icon {
+    background-color: rgba(231, 29, 54, 0.15);
+    color: #e71d36;
+}
+
+.toast.warning .toast-icon {
+    background-color: rgba(255, 183, 3, 0.15);
+    color: #ffb703;
+}
+
+.toast.info .toast-icon {
+    background-color: rgba(var(--primary-rgb), 0.15);
+    color: var(--primary);
+}
+
+.toast-body {
+    flex: 1;
+}
+
+.toast-title {
+    font-family: var(--font-titles);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
+.toast-message {
+    font-size: 0.82rem;
+    color: #a0a0a5;
+    line-height: 1.4;
+}
+
+.toast-close {
+    cursor: pointer;
+    color: #71717a;
+    font-size: 0.9rem;
+    padding: 4px;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.toast-close:hover {
+    color: #ffffff;
+}
+
+/* Barre de progression du toast */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    width: 100%;
+    transform-origin: left;
+    animation: toastProgress linear forwards;
+}
+
+.toast { position: relative; overflow: hidden; }
+
+.toast.success .toast-progress { background-color: #2ec4b6; }
+.toast.error   .toast-progress { background-color: #e71d36; }
+.toast.warning .toast-progress { background-color: #ffb703; }
+.toast.info    .toast-progress { background-color: var(--primary); }
+
+@keyframes toastProgress {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+/* =========================================================================
+   5. ENHANCED PRODUCT CARD ANIMATION
+   ========================================================================= */
+.product-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Effet de brillance au survol */
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.04),
+        transparent
+    );
+    transition: left 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.product-card:hover::before {
+    left: 150%;
+}
+
+/* =========================================================================
+   6. CART BADGE BOUNCE ANIMATION
+   ========================================================================= */
+@keyframes badgeBounce {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.4); }
+    60% { transform: scale(0.9); }
+    80% { transform: scale(1.1); }
+}
+
+.cart-badge.bounce {
+    animation: badgeBounce 0.5s ease;
+}
+
+/* =========================================================================
+   7. SMOOTH PAGE TRANSITIONS
+   ========================================================================= */
+body {
+    animation: pageFadeIn 0.4s ease forwards;
+}
+
+@keyframes pageFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* =========================================================================
+   8. FILTER TAB TRANSITION (Page Catalogue)
+   ========================================================================= */
+.product-card.filtering-out {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.product-card.filtering-in {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+}
+
+/* =========================================================================
+   9. INPUT FOCUS EFFECTS (Micro-interaction)
+   ========================================================================= */
+.form-control {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-control:hover:not(:focus) {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================================================
+   10. HERO ACCENT DECORATION
+   ========================================================================= */
+.hero-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hero-deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 107, 8, 0.12);
+}
+
+.hero-deco-circle:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    bottom: -80px;
+    left: -80px;
+    border-color: rgba(var(--primary-rgb), 0.12);
+    animation: rotateCircle 30s linear infinite;
+}
+
+.hero-deco-circle:nth-child(2) {
+    width: 500px;
+    height: 500px;
+    bottom: -200px;
+    left: -200px;
+    border-color: rgba(var(--primary-rgb), 0.06);
+    animation: rotateCircle 45s linear infinite reverse;
+}
+
+@keyframes rotateCircle {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* =========================================================================
+   11. NAVBAR SCROLL EFFECT
+   ========================================================================= */
+.navbar.scrolled {
+    background-color: rgba(12, 12, 14, 0.97);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================================================
+   12. FLOATING BUTTON TOOLTIP
+   ========================================================================= */
+.floating-whatsapp::after {
+    content: 'Commander sur WhatsApp';
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #1a1a20;
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.floating-whatsapp:hover::after {
+    opacity: 1;
+}
+
+/* =========================================================================
+   13. RESPONSIVE SUPPLEMENTS FOR PHASE 4
+   ========================================================================= */
+@media (max-width: 576px) {
+    #toastContainer {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        transform: none;
+        width: auto;
+        max-width: none;
+    }
+
+    .floating-whatsapp::after {
+        display: none; /* Pas de tooltip sur mobile */
+    }
+
+    [data-reveal] {
+        /* Réduire les animations sur petits écrans pour les perfs */
+        transition-duration: 0.4s;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Features grid : 1 colonne sur mobile */
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Cart summary pleine largeur */
+    .cart-summary {
+        position: static;
+    }
+
+    /* Search bar full width */
+    .search-bar {
+        max-width: 100%;
+    }
+}
+
+/* =========================================================================
+   14. SKIP TO CONTENT (Accessibilité)
+   ========================================================================= */
+.skip-to-content {
+    position: fixed;
+    top: -100%;
+    left: 24px;
+    background-color: var(--primary);
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-family: var(--font-titles);
+    font-weight: 600;
+    z-index: 99999;
+    transition: top 0.2s ease;
+    text-decoration: none;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* =========================================================================
+   15. LAZY IMAGE PLACEHOLDER
+   ========================================================================= */
+img[data-src] {
+    background: linear-gradient(90deg, #1a1a20 25%, #222228 50%, #1a1a20 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+img.lazy-loaded {
+    animation: imageFadeIn 0.4s ease forwards;
+    background: none;
+}
+
+@keyframes imageFadeIn {
+    from { opacity: 0.3; }
+    to   { opacity: 1; }
+}
