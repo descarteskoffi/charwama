@@ -1,21 +1,30 @@
 /**
  * main.js — Script Principal Chawarma Premium
- * Phase 4 : Version enrichie avec Toast, Scroll Reveal, Lazy Loading, Page Loader
- * 
+ * Version 2.0 : Persistance des commandes en BDD, Gestion des tables/QR codes,
+ *                Vérification d'ouverture, Récapitulatif de commande amélioré
+ *
  * Modules :
- *   1. Page Loader
- *   2. Menu mobile
- *   3. Scroll Progress Bar + Navbar scroll effect
- *   4. Scroll Reveal (IntersectionObserver)
- *   5. Lazy Loading des images
- *   6. Toast Notifications
- *   7. Gestion du Panier (localStorage)
- *   8. Filtrage et Recherche (page catalogue)
- *   9. Modal Produit
- *  10. Page Panier & Construction de la commande
- *  11. Redirection WhatsApp
- *  12. URL Product Pre-selection
+ *   1.  Page Loader
+ *   2.  Menu mobile
+ *   3.  Thème Dark / Light
+ *   4.  Scroll Progress Bar + Navbar scroll effect
+ *   5.  Scroll Reveal (IntersectionObserver)
+ *   6.  Lazy Loading des images
+ *   7.  Toast Notifications
+ *   8.  Gestion du Panier (localStorage)
+ *   9.  Filtrage et Recherche (page catalogue)
+ *   10. Modal Produit
+ *   11. Page Panier & Construction de la commande (refonte complète)
+ *   12. Détection de table via QR code (URL param ?table=...)
+ *   13. Vérification d'ouverture du restaurant
+ *   14. Soumission de commande (DB + WhatsApp)
+ *   15. URL Product Pre-selection
  */
+
+// =========================================================================
+// CONSTANTE GLOBALE : TABLE DÉTECTÉE VIA QR CODE
+// =========================================================================
+let detectedTableFromQR = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Initialisation ---
@@ -27,11 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initLazyImages();
     updateCartBadge();
 
+    // Détection de table depuis l'URL (QR code)
+    detectTableFromUrl();
+
+    // Vérification d'ouverture avant rendu du panier
     if (document.getElementById('cartItemsList')) {
         renderCartPage();
+        checkRestaurantOpening();
+        initCartPageTable();
     }
 
     checkUrlForProduct();
+    checkRestaurantOpeningBanner();
 });
 
 /* =========================================================================
@@ -41,14 +57,12 @@ function initPageLoader() {
     const loader = document.getElementById('pageLoader');
     if (!loader) return;
 
-    // Cacher le loader après le chargement complet
     window.addEventListener('load', () => {
         setTimeout(() => {
             loader.classList.add('hidden');
         }, 300);
     });
 
-    // Fallback : cacher après 2 secondes quoi qu'il arrive
     setTimeout(() => {
         loader.classList.add('hidden');
     }, 2000);
@@ -73,7 +87,6 @@ function initMobileNav() {
         }
     });
 
-    // Fermer le menu si on clique en dehors
     document.addEventListener('click', (e) => {
         if (!toggle.contains(e.target) && !menu.contains(e.target)) {
             menu.classList.remove('active');
@@ -90,7 +103,6 @@ function initTheme() {
     const btn = document.getElementById('themeToggleBtn');
     if (!btn) return;
 
-    // Lire le thème actuel (déjà appliqué par le script inline du <head>)
     const applyTheme = (theme) => {
         if (theme === 'light') {
             document.documentElement.setAttribute('data-theme', 'light');
@@ -104,24 +116,21 @@ function initTheme() {
         localStorage.setItem('chawarma_theme', theme);
     };
 
-    // Initialiser l'état du bouton selon le thème déjà actif
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
     applyTheme(currentTheme);
 
-    // Écouter le clic
     btn.addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme');
         const next = current === 'light' ? 'dark' : 'light';
         applyTheme(next);
 
-        // Petit toast de confirmation
         const label = next === 'light' ? '☀️ Mode clair activé' : '🌙 Mode sombre activé';
         showToast(label, 'info', 2000, 'Thème modifié');
     });
 }
 
 /* =========================================================================
-   3. SCROLL PROGRESS BAR + NAVBAR EFFECT
+   4. SCROLL PROGRESS BAR + NAVBAR EFFECT
    ========================================================================= */
 function initScrollProgress() {
     const progressBar = document.getElementById('scrollProgressBar');
@@ -148,11 +157,11 @@ function initScrollProgress() {
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // Initialiser à l'état actuel
+    onScroll();
 }
 
 /* =========================================================================
-   4. SCROLL REVEAL (IntersectionObserver)
+   5. SCROLL REVEAL (IntersectionObserver)
    ========================================================================= */
 function initScrollReveal() {
     const elements = document.querySelectorAll('[data-reveal]');
@@ -162,7 +171,7 @@ function initScrollReveal() {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('is-revealed');
-                observer.unobserve(entry.target); // Jouer une seule fois
+                observer.unobserve(entry.target);
             }
         });
     }, {
@@ -174,7 +183,7 @@ function initScrollReveal() {
 }
 
 /* =========================================================================
-   5. LAZY LOADING DES IMAGES
+   6. LAZY LOADING DES IMAGES
    ========================================================================= */
 function initLazyImages() {
     const lazyImgs = document.querySelectorAll('img[data-src]');
@@ -195,7 +204,6 @@ function initLazyImages() {
 
         lazyImgs.forEach((img) => imgObserver.observe(img));
     } else {
-        // Fallback pour anciens navigateurs
         lazyImgs.forEach((img) => {
             img.src = img.getAttribute('data-src');
             img.removeAttribute('data-src');
@@ -204,7 +212,7 @@ function initLazyImages() {
 }
 
 /* =========================================================================
-   6. TOAST NOTIFICATIONS (Remplace les alert() natifs)
+   7. TOAST NOTIFICATIONS
    ========================================================================= */
 const TOAST_ICONS = {
     success: 'fa-circle-check',
@@ -220,13 +228,6 @@ const TOAST_TITLES = {
     info:    'Information',
 };
 
-/**
- * Affiche un toast de notification.
- * @param {string} message - Le message principal
- * @param {string} type    - 'success' | 'error' | 'warning' | 'info'
- * @param {number} duration - Durée en ms (défaut: 4000)
- * @param {string} title    - Titre optionnel (override le titre par défaut)
- */
 function showToast(message, type = 'info', duration = 4000, title = null) {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -253,7 +254,6 @@ function showToast(message, type = 'info', duration = 4000, title = null) {
 
     container.appendChild(toast);
 
-    // Disparaître automatiquement
     const timer = setTimeout(() => dismissToast(toast), duration);
     toast._timer = timer;
 }
@@ -273,7 +273,7 @@ function escapeHtml(str) {
 }
 
 /* =========================================================================
-   7. GESTION DU PANIER (LOCAL STORAGE)
+   8. GESTION DU PANIER (LOCAL STORAGE)
    ========================================================================= */
 function getCart() {
     return JSON.parse(localStorage.getItem('chawarma_cart')) || [];
@@ -294,7 +294,6 @@ function updateCartBadge() {
 
     if (totalItems > 0) {
         badge.classList.remove('bounce');
-        // Force reflow pour relancer l'animation
         void badge.offsetWidth;
         badge.classList.add('bounce');
     }
@@ -303,7 +302,6 @@ function updateCartBadge() {
 function addToCart(id, name, basePrice, image, qty, options = []) {
     const cart = getCart();
 
-    // Clé unique pour différencier les articles avec options différentes
     const optionsKey = options.map(o => o.nom).sort().join('|');
     const existingIndex = cart.findIndex(item => item.id === id && item.optionsKey === optionsKey);
 
@@ -329,7 +327,7 @@ function addToCart(id, name, basePrice, image, qty, options = []) {
 }
 
 /* =========================================================================
-   8. FILTRAGE ET RECHERCHE (PAGE CATALOGUE)
+   9. FILTRAGE ET RECHERCHE (PAGE CATALOGUE)
    ========================================================================= */
 let activeCategoryId = null;
 
@@ -384,7 +382,7 @@ function filterProducts() {
 }
 
 /* =========================================================================
-   9. MODAL PRODUIT
+   10. MODAL PRODUIT
    ========================================================================= */
 function openProductModal(button) {
     const card = button.closest('.product-card');
@@ -410,7 +408,6 @@ function openProductModal(button) {
         modalImg.src = 'https://images.unsplash.com/photo-1561651823-34fed022540d?w=500&auto=format&fit=crop&q=60';
     }
 
-    // Construire les options
     const optionsList = document.getElementById('modalOptionsList');
     const optionsWrapper = document.getElementById('modalOptionsWrapper');
     optionsList.innerHTML = '';
@@ -428,10 +425,10 @@ function openProductModal(button) {
                 : 'Gratuit';
             label.innerHTML = `
                 <div class="option-checkbox-wrapper">
-                    <input type="checkbox" id="modal_opt_${index}" 
-                           class="modal-option-checkbox" 
-                           data-name="${escapeHtml(opt.nom_option)}" 
-                           data-price="${opt.prix_supplement}" 
+                    <input type="checkbox" id="modal_opt_${index}"
+                           class="modal-option-checkbox"
+                           data-name="${escapeHtml(opt.nom_option)}"
+                           data-price="${opt.prix_supplement}"
                            style="display: none;">
                     <div class="option-checkbox">
                         <i class="fa-solid fa-check"></i>
@@ -445,7 +442,7 @@ function openProductModal(button) {
     }
 
     document.getElementById('productModal').classList.add('active');
-    document.body.style.overflow = 'hidden'; // Empêcher le scroll derrière la modal
+    document.body.style.overflow = 'hidden';
 }
 
 function closeProductModal() {
@@ -453,9 +450,11 @@ function closeProductModal() {
     document.body.style.overflow = '';
 }
 
-// Fermer la modal sur Escape
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeProductModal();
+    if (e.key === 'Escape') {
+        closeProductModal();
+        closeRecapModal();
+    }
 });
 
 function adjustModalQuantity(val) {
@@ -469,7 +468,6 @@ function addModalProductToCart() {
     const id = parseInt(document.getElementById('modalProductId').value);
     const name = document.getElementById('modalProductTitle').innerText;
 
-    // Récupérer le prix de base en nettoyant le texte
     const rawPrice = document.getElementById('modalProductPrice').innerText.replace(/[^0-9]/g, '');
     const basePrice = parseFloat(rawPrice);
 
@@ -487,12 +485,11 @@ function addModalProductToCart() {
     addToCart(id, name, basePrice, image, qty, selectedOptions);
     closeProductModal();
 
-    // Toast succès plutôt qu'un alert natif
     showToast(`"${name}" a été ajouté à votre commande !`, 'success', 4000, 'Ajouté au panier');
 }
 
 /* =========================================================================
-   10. PAGE PANIER ET RENDU
+   11. PAGE PANIER - RENDU & ACTIONS
    ========================================================================= */
 function renderCartPage() {
     const container = document.getElementById('cartItemsList');
@@ -568,12 +565,10 @@ function renderCartPage() {
         container.appendChild(cartItemDiv);
     });
 
-    // Mettre à jour le résumé
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById('summaryCount').innerText = totalQty;
     document.getElementById('summaryTotal').innerText = `${grandTotal.toLocaleString('fr-FR')} FCFA`;
 
-    // Réappliquer scroll reveal sur les nouveaux éléments
     initScrollReveal();
 }
 
@@ -603,109 +598,432 @@ function removeCartItem(index) {
     showToast(`"${name}" a été retiré de votre commande.`, 'warning', 3000, 'Article retiré');
 }
 
-function toggleAddressField() {
-    const orderMode = document.getElementById('orderMode').value;
-    const addressGroup = document.getElementById('deliveryAddressGroup');
-    const addressInput = document.getElementById('clientAddress');
+/* =========================================================================
+   12. DÉTECTION DE TABLE VIA QR CODE (?table=...)
+   ========================================================================= */
+function detectTableFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNum = urlParams.get('table');
 
-    if (orderMode === 'Livraison') {
-        addressGroup.style.display = 'block';
-        addressInput.setAttribute('required', 'required');
+    if (tableNum) {
+        // Stocker dans sessionStorage pour persister sur la page du panier
+        sessionStorage.setItem('chawarma_detected_table', tableNum);
+        detectedTableFromQR = tableNum;
     } else {
-        addressGroup.style.display = 'none';
-        addressInput.removeAttribute('required');
-        addressInput.value = '';
+        // Ne pas effacer une table déjà détectée si on navigue vers une autre page
+        const stored = sessionStorage.getItem('chawarma_detected_table');
+        if (stored) {
+            detectedTableFromQR = stored;
+        }
     }
 }
 
 /* =========================================================================
-   11. REDIRECTION ET ENVOI SUR WHATSAPP
+   INIT DES CHAMPS SELON MODE DE RÉCEPTION (PANIER)
    ========================================================================= */
-function sendWhatsAppOrder(event) {
+function initCartPageTable() {
+    // Appliquer la logique initiale selon la table détectée
+    toggleOrderModeFields();
+}
+
+function toggleOrderModeFields() {
+    const mode = document.getElementById('orderMode') ? document.getElementById('orderMode').value : null;
+    if (!mode) return;
+
+    const tableGroup = document.getElementById('tableSelectionGroup');
+    const deliveryGroup = document.getElementById('deliveryAddressGroup');
+    const detectedInfo = document.getElementById('detectedTableInfo');
+    const tableSelect = document.getElementById('tableNumero');
+    const detectedSpan = document.getElementById('detectedTableNumSpan');
+    const addressInput = document.getElementById('clientAddress');
+
+    // Cacher tout par défaut
+    if (tableGroup) tableGroup.style.display = 'none';
+    if (deliveryGroup) deliveryGroup.style.display = 'none';
+    if (addressInput) addressInput.removeAttribute('required');
+
+    if (mode === 'Sur place') {
+        // Afficher la section table
+        if (tableGroup) tableGroup.style.display = 'block';
+
+        if (detectedTableFromQR) {
+            // Table détectée via QR code → afficher le message de confirmation
+            if (detectedInfo) {
+                detectedInfo.style.display = 'block';
+                if (detectedSpan) detectedSpan.textContent = detectedTableFromQR;
+            }
+            // Présélectionner la table dans le select si possible
+            if (tableSelect) {
+                for (let opt of tableSelect.options) {
+                    if (opt.value === detectedTableFromQR) {
+                        opt.selected = true;
+                        break;
+                    }
+                }
+                tableSelect.style.display = 'none'; // La table est auto-détectée, pas besoin du select
+            }
+        } else {
+            // Pas de table détectée → sélection manuelle obligatoire
+            if (detectedInfo) detectedInfo.style.display = 'none';
+            if (tableSelect) tableSelect.style.display = 'block';
+        }
+
+    } else if (mode === 'Livraison') {
+        if (deliveryGroup) deliveryGroup.style.display = 'block';
+        if (addressInput) addressInput.setAttribute('required', 'required');
+        // Réinitialiser la sélection de table
+        if (detectedInfo) detectedInfo.style.display = 'none';
+    } else {
+        // À emporter : aucune table, aucune adresse requise
+        if (detectedInfo) detectedInfo.style.display = 'none';
+    }
+}
+
+/* =========================================================================
+   13. VÉRIFICATION D'OUVERTURE DU RESTAURANT
+   ========================================================================= */
+function checkRestaurantOpening() {
+    const submitBtn = document.getElementById('cartSubmitBtn');
+    if (!submitBtn) return;
+
+    fetch(DYNAMIC_URLROOT + '/api/ouverture')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.isOpen) {
+                // Désactiver le bouton de commande
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.4';
+                submitBtn.style.cursor = 'not-allowed';
+                submitBtn.style.backgroundColor = '#666';
+                submitBtn.style.borderColor = '#666';
+                submitBtn.style.boxShadow = 'none';
+                submitBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Restaurant fermé — Commandes indisponibles';
+
+                // Afficher une bannière d'information
+                const cartPage = document.querySelector('.cart-summary');
+                if (cartPage) {
+                    const banner = document.createElement('div');
+                    banner.style.cssText = 'padding: 16px; background-color: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; color: #ef4444; font-weight: bold; border-radius: 4px; margin-bottom: 20px; line-height: 1.5;';
+                    banner.innerHTML = `<i class="fa-solid fa-circle-xmark" style="margin-right: 8px;"></i> ${escapeHtml(data.message)}`;
+                    cartPage.insertBefore(banner, cartPage.querySelector('.summary-row'));
+                }
+            }
+        })
+        .catch(() => {
+            // En cas d'erreur réseau, ne pas bloquer (tolérance en faveur du client)
+        });
+}
+
+function checkRestaurantOpeningBanner() {
+    // Afficher une bannière globale discrète si le restaurant est fermé (sur toutes les pages)
+    const existingBanner = document.getElementById('restaurantClosedBanner');
+    if (existingBanner) return; // Déjà présent
+
+    const urlRoot = (typeof DYNAMIC_URLROOT !== 'undefined') ? DYNAMIC_URLROOT : '';
+    fetch(urlRoot + '/api/ouverture')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.isOpen) {
+                const banner = document.createElement('div');
+                banner.id = 'restaurantClosedBanner';
+                banner.setAttribute('role', 'alert');
+                banner.style.cssText = `
+                    position: fixed;
+                    bottom: 90px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(180,30,30,0.95));
+                    color: #fff;
+                    padding: 14px 24px;
+                    border-radius: 50px;
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    z-index: 999;
+                    box-shadow: 0 8px 25px rgba(239,68,68,0.4);
+                    max-width: 90vw;
+                    text-align: center;
+                    backdrop-filter: blur(8px);
+                    animation: slideInUp 0.4s ease;
+                `;
+                banner.innerHTML = `<i class="fa-solid fa-moon" style="margin-right: 8px;"></i> ${escapeHtml(data.message)}`;
+                document.body.appendChild(banner);
+            }
+        })
+        .catch(() => {});
+}
+
+/* =========================================================================
+   14. SOUMISSION DE COMMANDE : DB + WHATSAPP
+   ========================================================================= */
+
+// Objet pour stocker les données de la commande en attente de confirmation
+let pendingOrderData = null;
+
+/**
+ * Étape 1 : Validation du formulaire et ouverture de la modale de récapitulatif
+ */
+function handleOrderFormSubmit(event) {
     event.preventDefault();
 
     const clientName = document.getElementById('clientName').value.trim();
     const orderMode = document.getElementById('orderMode').value;
-    const clientAddress = document.getElementById('clientAddress')
-        ? document.getElementById('clientAddress').value.trim()
-        : '';
-    const orderNotes = document.getElementById('orderNotes').value.trim();
     const cart = getCart();
 
-    // Validations avec Toast
+    // Validations de base
     if (cart.length === 0) {
         showToast('Votre panier est vide. Ajoutez des articles avant de commander.', 'error', 4000, 'Panier vide');
         return;
     }
-    if (clientName === '') {
+    if (!clientName) {
         showToast('Veuillez saisir votre nom pour la commande.', 'warning', 4000, 'Champ requis');
         document.getElementById('clientName').focus();
         return;
     }
-    if (orderMode === 'Livraison' && clientAddress === '') {
-        showToast('Veuillez saisir votre adresse de livraison.', 'warning', 4000, 'Champ requis');
-        document.getElementById('clientAddress').focus();
-        return;
+
+    // Récupérer le numéro de téléphone (optionnel sur le formulaire visible, on l'ajoutera si besoin)
+    const telephoneInput = document.getElementById('clientPhone');
+    const telephone = telephoneInput ? telephoneInput.value.trim() : '';
+
+    // Gestion de la table
+    let tableNumero = '';
+    if (orderMode === 'Sur place') {
+        if (detectedTableFromQR) {
+            tableNumero = detectedTableFromQR;
+        } else {
+            const tableSelect = document.getElementById('tableNumero');
+            tableNumero = tableSelect ? tableSelect.value : '';
+        }
+        if (!tableNumero) {
+            showToast('Veuillez sélectionner votre numéro de table.', 'warning', 4000, 'Table requise');
+            return;
+        }
     }
 
-    // Construire le message WhatsApp
-    let msg = `*Bonjour Chawarma Premium, je souhaite passer une commande :*\n\n`;
-    msg += `*🧾 RÉCAPITULATIF DE LA COMMANDE :*\n`;
-    msg += `--------------------------------------------------\n`;
+    // Gestion de l'adresse livraison
+    let adresseLivraison = '';
+    if (orderMode === 'Livraison') {
+        adresseLivraison = document.getElementById('clientAddress') ? document.getElementById('clientAddress').value.trim() : '';
+        if (!adresseLivraison) {
+            showToast('Veuillez saisir votre adresse de livraison.', 'warning', 4000, 'Adresse requise');
+            document.getElementById('clientAddress').focus();
+            return;
+        }
+    }
 
+    const orderNotes = document.getElementById('orderNotes') ? document.getElementById('orderNotes').value.trim() : '';
+
+    // Calcul du total
     let grandTotal = 0;
     cart.forEach(item => {
+        grandTotal += item.prixUnitaire * item.qty;
+    });
+
+    // Stocker les données pour la confirmation finale
+    pendingOrderData = {
+        clientName,
+        telephone: telephone || 'N/A',
+        orderMode,
+        tableNumero,
+        adresseLivraison,
+        orderNotes,
+        cart,
+        grandTotal
+    };
+
+    // Construire et afficher le récapitulatif dans la modale
+    buildRecapModal(pendingOrderData);
+    openRecapModal();
+}
+
+/**
+ * Construit le contenu HTML de la modale de récapitulatif
+ */
+function buildRecapModal(data) {
+    const recapContent = document.getElementById('recapModalContent');
+    if (!recapContent) return;
+
+    // Destination selon le mode
+    let destinationHtml = '';
+    if (data.orderMode === 'Sur place') {
+        destinationHtml = `<strong style="color: #2ec4b6;"><i class="fa-solid fa-chair"></i> Table ${escapeHtml(data.tableNumero)}</strong>`;
+    } else if (data.orderMode === 'Livraison') {
+        destinationHtml = `<strong style="color: #3b82f6;"><i class="fa-solid fa-truck"></i> ${escapeHtml(data.adresseLivraison)}</strong>`;
+    } else {
+        destinationHtml = `<strong style="color: #ff6b08;"><i class="fa-solid fa-shop"></i> Retrait au comptoir</strong>`;
+    }
+
+    // Liste des articles
+    let itemsHtml = '<ul style="list-style: none; padding: 0; margin: 0 0 16px 0;">';
+    data.cart.forEach(item => {
+        itemsHtml += `<li style="display:flex; justify-content:space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <span><strong style="color: var(--primary);">${item.qty}x</strong> ${escapeHtml(item.nom)}</span>
+            <span>${(item.prixUnitaire * item.qty).toLocaleString('fr-FR')} F</span>
+        </li>`;
+        if (item.options && item.options.length > 0) {
+            item.options.forEach(opt => {
+                itemsHtml += `<li style="padding: 2px 0 2px 16px; font-size: 0.8rem; color: #a0a0a5; font-style: italic;">
+                    + ${escapeHtml(opt.nom)} ${parseFloat(opt.prix) > 0 ? `(+${opt.prix}F)` : '(Gratuit)'}
+                </li>`;
+            });
+        }
+    });
+    itemsHtml += '</ul>';
+
+    recapContent.innerHTML = `
+        ${itemsHtml}
+        <div style="display: grid; gap: 12px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color: #a0a0a5;">Mode de réception :</span>
+                <span style="font-weight: bold;">${escapeHtml(data.orderMode)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color: #a0a0a5;">Destination :</span>
+                <span>${destinationHtml}</span>
+            </div>
+            ${data.orderNotes ? `<div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <span style="color: #a0a0a5;">Notes :</span>
+                <span style="text-align:right; max-width: 60%;">${escapeHtml(data.orderNotes)}</span>
+            </div>` : ''}
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight: bold; font-size: 1rem;">Total à payer :</span>
+                <span style="font-weight: bold; font-size: 1.2rem; color: var(--primary); font-family: var(--font-titles);">${data.grandTotal.toLocaleString('fr-FR')} FCFA</span>
+            </div>
+        </div>
+    `;
+}
+
+function openRecapModal() {
+    const modal = document.getElementById('orderRecapModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeRecapModal() {
+    const modal = document.getElementById('orderRecapModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+/**
+ * Étape 2 : Confirmer, enregistrer en BDD, puis rediriger vers WhatsApp
+ */
+async function confirmAndSubmitOrder() {
+    if (!pendingOrderData) return;
+
+    const confirmBtn = document.getElementById('recapConfirmBtn');
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi en cours...';
+    }
+
+    const data = pendingOrderData;
+
+    // ---- 1. Enregistrement en base de données via l'API AJAX ----
+    let numeroCommande = null;
+    try {
+        const payload = {
+            clientName: data.clientName,
+            telephone: data.telephone,
+            orderMode: data.orderMode,
+            tableNumero: data.tableNumero,
+            clientAddress: data.adresseLivraison,
+            orderNotes: data.orderNotes,
+            prixTotal: data.grandTotal,
+            items: data.cart
+        };
+
+        const response = await fetch(DYNAMIC_URLROOT + '/api/commande/creer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            numeroCommande = result.numero_commande;
+        } else {
+            // Avertir mais ne pas bloquer — la commande WhatsApp doit quand même partir
+            console.warn('Erreur BDD:', result.error);
+            showToast('La commande a été envoyée sur WhatsApp, mais n\'a pas pu être enregistrée en base de données.', 'warning', 6000, 'Avertissement');
+        }
+    } catch (err) {
+        console.error('Erreur réseau lors de l\'enregistrement:', err);
+    }
+
+    // ---- 2. Construire le message WhatsApp ----
+    let msg = `*🔥 NOUVELLE COMMANDE — Chawarma Elite*\n`;
+    if (numeroCommande) {
+        msg += `*Référence : ${numeroCommande}*\n`;
+    }
+    msg += `\n*🧾 DÉTAIL DE LA COMMANDE :*\n`;
+    msg += `--------------------------------------------------\n`;
+
+    data.cart.forEach(item => {
         const itemTotal = item.prixUnitaire * item.qty;
-        grandTotal += itemTotal;
         msg += `• *${item.qty}x ${item.nom}*\n`;
         if (item.options && item.options.length > 0) {
             item.options.forEach(o => {
                 msg += `  └ _${o.nom} (${parseFloat(o.prix) > 0 ? `+${o.prix} F` : 'Gratuit'})_\n`;
             });
         }
-        msg += `  _Prix : ${item.prixUnitaire.toLocaleString('fr-FR')} F | Sous-total : ${itemTotal.toLocaleString('fr-FR')} F_\n\n`;
+        msg += `  _Prix unit. : ${item.prixUnitaire.toLocaleString('fr-FR')} F | Sous-total : ${itemTotal.toLocaleString('fr-FR')} F_\n\n`;
     });
 
     msg += `--------------------------------------------------\n`;
-    msg += `*💰 TOTAL COMMANDE : ${grandTotal.toLocaleString('fr-FR')} FCFA*\n\n`;
+    msg += `*💰 TOTAL : ${data.grandTotal.toLocaleString('fr-FR')} FCFA*\n\n`;
     msg += `*👤 INFORMATIONS CLIENT :*\n`;
     msg += `--------------------------------------------------\n`;
-    msg += `• *Nom du Client :* ${clientName}\n`;
-    msg += `• *Mode de retrait :* ${orderMode}\n`;
-
-    if (orderMode === 'Livraison') {
-        msg += `• *Adresse de livraison :* ${clientAddress}\n`;
+    msg += `• *Nom :* ${data.clientName}\n`;
+    if (data.telephone && data.telephone !== 'N/A') {
+        msg += `• *Téléphone :* ${data.telephone}\n`;
     }
-    if (orderNotes !== '') {
-        msg += `• *Notes spéciales :* ${orderNotes}\n`;
+    msg += `• *Mode de réception :* ${data.orderMode}\n`;
+
+    if (data.orderMode === 'Sur place') {
+        msg += `• *Table :* ${data.tableNumero}\n`;
+    } else if (data.orderMode === 'Livraison') {
+        msg += `• *Adresse de livraison :* ${data.adresseLivraison}\n`;
+    } else {
+        msg += `• *Retrait :* Au comptoir\n`;
+    }
+
+    if (data.orderNotes) {
+        msg += `• *Notes :* ${data.orderNotes}\n`;
     }
 
     msg += `--------------------------------------------------\n`;
-    msg += `_Merci et à tout de suite en cuisine !_ 🍳`;
+    msg += `_Merci et à tout de suite en cuisine ! 🍳_`;
 
-    // Numéro WhatsApp (déclaré dans le footer PHP)
+    // ---- 3. Ouvrir WhatsApp ----
     const phone = (typeof RECEIVING_WHATSAPP_PHONE !== 'undefined' && RECEIVING_WHATSAPP_PHONE)
         ? RECEIVING_WHATSAPP_PHONE
         : (typeof DEFAULT_PHONE !== 'undefined' ? DEFAULT_PHONE : '');
 
     const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
-    // Vider le panier
+    // ---- 4. Vider le panier ----
     localStorage.removeItem('chawarma_cart');
+    sessionStorage.removeItem('chawarma_detected_table');
     updateCartBadge();
 
-    // Ouvrir WhatsApp
+    // ---- 5. Fermer modale et rediriger ----
+    closeRecapModal();
     window.open(waUrl, '_blank');
 
-    // Toast + redirection
-    showToast('Votre commande a été compilée ! Vous allez être redirigé vers WhatsApp.', 'success', 3500, 'Commande envoyée 🎉');
+    showToast('Votre commande a été envoyée ! Vous allez être redirigé vers WhatsApp.', 'success', 3500, 'Commande envoyée 🎉');
     setTimeout(() => {
         window.location.href = (typeof DYNAMIC_URLROOT !== 'undefined' ? DYNAMIC_URLROOT : '') + '/';
     }, 3600);
 }
 
 /* =========================================================================
-   12. PRÉ-OUVERTURE PRODUIT PAR URL (?product=[id])
+   15. PRÉ-OUVERTURE PRODUIT PAR URL (?product=[id])
    ========================================================================= */
 function checkUrlForProduct() {
     const urlParams = new URLSearchParams(window.location.search);

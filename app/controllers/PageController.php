@@ -69,4 +69,17 @@ class PageController extends Controller {
         
         $this->render('404', $data);
     }
+
+    /**
+     * Vérification de l'état d'ouverture du restaurant pour l'API AJAX
+     */
+    public function checkOpening() {
+        require_once APPROOT . '/models/Schedule.php';
+        $scheduleModel = new Schedule();
+        $status = $scheduleModel->checkStatus();
+        
+        header('Content-Type: application/json');
+        echo json_encode($status);
+        exit();
+    }
 }

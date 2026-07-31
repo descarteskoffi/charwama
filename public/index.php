@@ -86,8 +86,25 @@ $router->add('/admin/categories/ajouter', 'AdminController', 'addCategory');
 $router->add('/admin/categories/modifier/{id}', 'AdminController', 'editCategory');
 $router->add('/admin/categories/supprimer/{id}', 'AdminController', 'deleteCategory');
 
+// GESTION DES COMMANDES
+$router->add('/admin/commandes', 'AdminController', 'orders');
+$router->add('/admin/commandes/statut', 'AdminController', 'updateOrderStatus');
+
+// GESTION DES HORAIRES
+$router->add('/admin/horaires', 'AdminController', 'schedule');
+
+// GESTION DES TABLES & QR CODES
+$router->add('/admin/tables', 'AdminController', 'tables');
+$router->add('/admin/tables/ajouter', 'AdminController', 'addTable');
+$router->add('/admin/tables/modifier/{id}', 'AdminController', 'editTable');
+$router->add('/admin/tables/supprimer/{id}', 'AdminController', 'deleteTable');
+
 // Paramètres Généraux
 $router->add('/admin/parametres', 'AdminController', 'settings');
+
+// API PUBLIQUES / AJAX
+$router->add('/api/commande/creer', 'CartController', 'createOrder');
+$router->add('/api/ouverture', 'PageController', 'checkOpening');
 
 // Dispatch de la requête
 $router->dispatch($routePath);

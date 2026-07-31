@@ -34,6 +34,11 @@ $adminName = $_SESSION['admin_name'] ?? 'Administratrice';
                     </a>
                 </li>
                 <li>
+                    <a href="<?php echo DYNAMIC_URLROOT; ?>/admin/commandes" class="admin-menu-link <?php echo $activePage === 'orders' ? 'active' : ''; ?>">
+                        <i class="fa-solid fa-receipt"></i> Commandes
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo DYNAMIC_URLROOT; ?>/admin/categories" class="admin-menu-link <?php echo $activePage === 'categories' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-tags"></i> Catégories
                     </a>
@@ -41,6 +46,16 @@ $adminName = $_SESSION['admin_name'] ?? 'Administratrice';
                 <li>
                     <a href="<?php echo DYNAMIC_URLROOT; ?>/admin/produits" class="admin-menu-link <?php echo $activePage === 'products' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-hamburger"></i> Produits
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo DYNAMIC_URLROOT; ?>/admin/horaires" class="admin-menu-link <?php echo $activePage === 'schedule' ? 'active' : ''; ?>">
+                        <i class="fa-solid fa-clock"></i> Horaires
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo DYNAMIC_URLROOT; ?>/admin/tables" class="admin-menu-link <?php echo $activePage === 'tables' ? 'active' : ''; ?>">
+                        <i class="fa-solid fa-qrcode"></i> Tables &amp; QR Codes
                     </a>
                 </li>
                 <li>

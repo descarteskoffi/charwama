@@ -8,17 +8,26 @@ class AdminController extends Controller {
     private $categoryModel;
     private $productModel;
     private $settingModel;
+    private $orderModel;
+    private $tableModel;
+    private $scheduleModel;
 
     public function __construct() {
         require_once APPROOT . '/models/Admin.php';
         require_once APPROOT . '/models/Category.php';
         require_once APPROOT . '/models/Product.php';
         require_once APPROOT . '/models/Setting.php';
+        require_once APPROOT . '/models/Order.php';
+        require_once APPROOT . '/models/RestaurantTable.php';
+        require_once APPROOT . '/models/Schedule.php';
 
         $this->adminModel = new Admin();
         $this->categoryModel = new Category();
         $this->productModel = new Product();
         $this->settingModel = new Setting();
+        $this->orderModel = new Order();
+        $this->tableModel = new RestaurantTable();
+        $this->scheduleModel = new Schedule();
     }
 
     /**
@@ -125,8 +134,16 @@ class AdminController extends Controller {
     public function dashboard() {
         $this->checkSessionTimeout();
 
+        $filter = $_GET['filter'] ?? 'today';
+        $start = $_GET['start'] ?? '';
+        $end = $_GET['end'] ?? '';
+
+        // Obtenir les statistiques du modèle Order
+        $stats = $this->orderModel->getStats($filter, $start, $end);
+        
         $prodCount = $this->productModel->count();
         $catCount = $this->categoryModel->count();
+        $tableCount = $this->tableModel->count();
         $recentLogs = $this->adminModel->getRecentLogs(5);
 
         $data = [
@@ -134,10 +151,239 @@ class AdminController extends Controller {
             'activePage' => 'dashboard',
             'prodCount' => $prodCount,
             'catCount' => $catCount,
-            'recentLogs' => $recentLogs
+            'tableCount' => $tableCount,
+            'recentLogs' => $recentLogs,
+            'stats' => $stats,
+            'filter' => $filter,
+            'start' => $start,
+            'end' => $end
         ];
 
         $this->render('admin/dashboard', $data);
+    }
+
+    /**
+     * =========================================================================
+     * GESTION DES COMMANDES
+     * =========================================================================
+     */
+    public function orders() {
+        $this->checkSessionTimeout();
+
+        $filters = [
+            'statut' => $_GET['statut'] ?? '',
+            'mode_reception' => $_GET['mode_reception'] ?? '',
+            'search' => $_GET['search'] ?? '',
+            'date_debut' => $_GET['date_debut'] ?? '',
+            'date_fin' => $_GET['date_fin'] ?? ''
+        ];
+
+        $orders = $this->orderModel->getAll($filters);
+
+        // Récupérer les articles pour chaque commande
+        $ordersWithItems = [];
+        foreach ($orders as $order) {
+            $order['items'] = $this->orderModel->getItemsByOrderId($order['id']);
+            $ordersWithItems[] = $order;
+        }
+
+        $csrfToken = $this->generateCsrfToken();
+
+        $data = [
+            'title' => 'Gestion des commandes',
+            'activePage' => 'orders',
+            'orders' => $ordersWithItems,
+            'filters' => $filters,
+            'csrfToken' => $csrfToken
+        ];
+
+        $this->render('admin/orders', $data);
+    }
+
+    /**
+     * Modification du statut d'une commande
+     */
+    public function updateOrderStatus() {
+        $this->checkSessionTimeout();
+
+        if ($this->isPost()) {
+            $post = $this->getPostData();
+
+            // Validation CSRF
+            if (!isset($post['csrf_token']) || !$this->verifyCsrfToken($post['csrf_token'])) {
+                die("Erreur CSRF lors de la modification de la commande.");
+            }
+
+            $orderId = isset($post['order_id']) ? (int)$post['order_id'] : 0;
+            $newStatus = $post['statut'] ?? '';
+
+            $allowedStatus = ['Nouvelle commande', 'Confirmée', 'En préparation', 'Prête', 'En livraison', 'Terminée', 'Annulée'];
+            if ($orderId > 0 && in_array($newStatus, $allowedStatus)) {
+                $this->orderModel->updateStatus($orderId, $newStatus);
+            }
+        }
+
+        $this->redirect('/admin/commandes');
+    }
+
+    /**
+     * =========================================================================
+     * GESTION DES HORAIRES D'OUVERTURE
+     * =========================================================================
+     */
+    public function schedule() {
+        $this->checkSessionTimeout();
+        
+        $error = '';
+        $success = '';
+
+        if ($this->isPost()) {
+            $post = $this->getPostData();
+
+            if (!isset($post['csrf_token']) || !$this->verifyCsrfToken($post['csrf_token'])) {
+                die("Erreur CSRF lors de l'enregistrement des horaires.");
+            }
+
+            // Enregistrer l'état manuel
+            $etatManuel = $post['etat_ouverture_manuel'] ?? 'ouvert';
+            $this->settingModel->saveAll(['etat_ouverture_manuel' => $etatManuel]);
+
+            // Enregistrer les exceptions de dates
+            $excDate = $post['fermeture_exceptionnelle_date'] ?? '';
+            $tempDebut = $post['fermeture_temporaire_debut'] ?? '';
+            $tempFin = $post['fermeture_temporaire_fin'] ?? '';
+
+            $this->settingModel->saveAll([
+                'fermeture_exceptionnelle_date' => $excDate,
+                'fermeture_temporaire_debut' => $tempDebut,
+                'fermeture_temporaire_fin' => $tempFin
+            ]);
+
+            // Mettre à jour les horaires hebdomadaires
+            for ($i = 0; $i <= 6; $i++) {
+                $ouvert = isset($post["ouvert_$i"]) ? 1 : 0;
+                $ouverture = $post["ouverture_$i"] ?? '11:30:00';
+                $fermeture = $post["fermeture_$i"] ?? '23:30:00';
+
+                $this->scheduleModel->updateDaySchedule($i, $ouvert, $ouverture, $fermeture);
+            }
+
+            $success = "Les horaires d'ouverture et paramètres ont été mis à jour avec succès.";
+        }
+
+        $weeklySchedules = $this->scheduleModel->getWeeklySchedules();
+        $siteSettings = $this->settingModel->getAll();
+        $csrfToken = $this->generateCsrfToken();
+
+        $data = [
+            'title' => "Gestion des Horaires d'Ouverture",
+            'activePage' => 'schedule',
+            'weeklySchedules' => $weeklySchedules,
+            'siteSettings' => $siteSettings,
+            'csrfToken' => $csrfToken,
+            'error' => $error,
+            'success' => $success
+        ];
+
+        $this->render('admin/schedule', $data);
+    }
+
+    /**
+     * =========================================================================
+     * GESTION DES TABLES (CRUD & QR CODES)
+     * =========================================================================
+     */
+    public function tables() {
+        $this->checkSessionTimeout();
+
+        $tables = $this->tableModel->getAll();
+        $csrfToken = $this->generateCsrfToken();
+        $error = '';
+        $success = '';
+
+        $data = [
+            'title' => 'Gestion des Tables & QR Codes',
+            'activePage' => 'tables',
+            'tables' => $tables,
+            'csrfToken' => $csrfToken,
+            'error' => $error,
+            'success' => $success
+        ];
+
+        $this->render('admin/tables', $data);
+    }
+
+    public function addTable() {
+        $this->checkSessionTimeout();
+
+        if ($this->isPost()) {
+            $post = $this->getPostData();
+
+            if (!isset($post['csrf_token']) || !$this->verifyCsrfToken($post['csrf_token'])) {
+                die("Erreur CSRF.");
+            }
+
+            $numero = $post['numero_table'] ?? '';
+            $nom = $post['nom_table'] ?? '';
+            $statut = isset($post['statut']) ? 1 : 0;
+
+            if (!empty($numero)) {
+                $existing = $this->tableModel->getByNumber($numero);
+                if ($existing) {
+                    $_SESSION['table_error'] = "La table numéro '$numero' existe déjà.";
+                } else {
+                    $this->tableModel->add($numero, $nom, $statut);
+                    $_SESSION['table_success'] = "La table '$numero' a été ajoutée avec succès.";
+                }
+            } else {
+                $_SESSION['table_error'] = "Le numéro de table est obligatoire.";
+            }
+        }
+
+        $this->redirect('/admin/tables');
+    }
+
+    public function editTable() {
+        $this->checkSessionTimeout();
+
+        if ($this->isPost()) {
+            $post = $this->getPostData();
+
+            if (!isset($post['csrf_token']) || !$this->verifyCsrfToken($post['csrf_token'])) {
+                die("Erreur CSRF.");
+            }
+
+            $id = isset($post['id']) ? (int)$post['id'] : 0;
+            $numero = $post['numero_table'] ?? '';
+            $nom = $post['nom_table'] ?? '';
+            $statut = isset($post['statut']) ? 1 : 0;
+
+            if ($id > 0 && !empty($numero)) {
+                $existing = $this->tableModel->getByNumber($numero);
+                if ($existing && $existing['id'] !== $id) {
+                    $_SESSION['table_error'] = "Une autre table porte déjà le numéro '$numero'.";
+                } else {
+                    $this->tableModel->update($id, $numero, $nom, $statut);
+                    $_SESSION['table_success'] = "La table a été modifiée avec succès.";
+                }
+            } else {
+                $_SESSION['table_error'] = "Veuillez remplir tous les champs.";
+            }
+        }
+
+        $this->redirect('/admin/tables');
+    }
+
+    public function deleteTable($id) {
+        $this->checkSessionTimeout();
+
+        $id = (int)$id;
+        if ($id > 0) {
+            $this->tableModel->delete($id);
+            $_SESSION['table_success'] = "La table a été supprimée avec succès.";
+        }
+
+        $this->redirect('/admin/tables');
     }
 
     /**
