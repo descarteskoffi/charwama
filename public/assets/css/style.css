@@ -4,15 +4,17 @@
    1. VARIABLES & DESIGN SYSTEM
    ========================================================================= */
 :root {
-    /* Color Palette — Vert Émeraude / Forêt Premium */
-    --primary: #10b981;          /* Émeraude lumineux pour dark mode */
-    --primary-hover: #059669;    /* Émeraude intermédiaire */
-    --primary-rgb: 16, 185, 129; /* Canaux RGB pour les opacités */
+    /* Color Palette — Orange Franco Fast-Food (couleur primaire unique) */
+    --primary: #ff6b08;           /* Orange signature Franco */
+    --primary-hover: #e05a00;     /* Orange foncé au survol */
+    --primary-rgb: 255, 107, 8;   /* Canaux RGB pour les opacités */
     --primary-light: rgba(var(--primary-rgb), 0.15);
-    --secondary: #2ec4b6;
-    --secondary-hover: #20a396;
+    --primary-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.40);
+
+    --secondary: #ff9f45;         /* Orange clair / ambre */
+    --secondary-hover: #e08030;
     --danger: #e71d36;
-    --success: #2ec4b6;
+    --success: #22c55e;           /* Vert uniquement pour les succès/confirmations */
     --warning: #ffb703;
 
     /* Backgrounds - Dark Mode (défaut) */
@@ -34,7 +36,7 @@
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
-    --shadow-primary: 0 4px 14px rgba(var(--primary-rgb), 0.35);
+    --shadow-primary: var(--primary-shadow);
 
     /* Typography */
     --font-titles: 'Outfit', sans-serif;
@@ -59,11 +61,15 @@
    Activé par data-theme="light" sur le <html>
    ========================================================================= */
 [data-theme="light"] {
-    /* Surcharges Couleur Primaire — Vert Émeraude Profond (Forêt) */
-    --primary: #0c684f;          /* Émeraude forêt profond pour fort contraste */
-    --primary-hover: #074c39;
-    --primary-rgb: 12, 104, 79;
-    --primary-light: rgba(var(--primary-rgb), 0.08);
+    /* Surcharges Couleur Primaire — Orange Profond (lisible sur fond clair) */
+    --primary: #c94e00;
+    --primary-hover: #a83f00;
+    --primary-rgb: 201, 78, 0;
+    --primary-light: rgba(var(--primary-rgb), 0.10);
+    --primary-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.25);
+
+    --secondary: #e07020;
+    --secondary-hover: #c05a10;
 
     /* Backgrounds - Ceramic & Warm Sand (Minimaliste et chaleureux) */
     --bg-main: #faf9f6;          /* Blanc céramique doux */
@@ -83,7 +89,7 @@
     --shadow-sm: 0 2px 10px rgba(28, 26, 30, 0.03);
     --shadow-md: 0 10px 30px rgba(28, 26, 30, 0.05);
     --shadow-lg: 0 20px 50px rgba(28, 26, 30, 0.08);
-    --shadow-primary: 0 6px 20px rgba(var(--primary-rgb), 0.18);
+    --shadow-primary: 0 6px 20px rgba(var(--primary-rgb), 0.22);
 
     /* Surcharges spécifiques */
     --hero-bg: radial-gradient(circle at 75% 25%, rgba(var(--primary-rgb), 0.08) 0%, transparent 65%);
@@ -167,15 +173,15 @@ button, input, select, textarea {
 }
 
 .btn-primary {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     color: #ffffff;
-    box-shadow: var(--shadow-primary);
+    box-shadow: var(--primary-shadow);
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-hover);
+    background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.5);
+    box-shadow: 0 6px 22px rgba(var(--primary-rgb), 0.55);
 }
 
 .btn-primary:active {
@@ -225,8 +231,8 @@ button, input, select, textarea {
 }
 
 .badge-new {
-    background-color: var(--secondary);
-    color: #0c0c0e;
+    background-color: var(--primary);
+    color: #ffffff;
 }
 
 .badge-popular {
@@ -304,7 +310,10 @@ button, input, select, textarea {
 }
 
 .nav-brand span {
-    color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .nav-menu {
@@ -365,7 +374,7 @@ button, input, select, textarea {
     position: absolute;
     top: 2px;
     right: 2px;
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     color: #ffffff;
     font-size: 0.7rem;
     font-weight: 800;
@@ -408,13 +417,37 @@ button, input, select, textarea {
     line-height: 1.1;
     margin-bottom: 24px;
     font-weight: 800;
+    color: var(--text-primary);
 }
 
-.hero-content h1 span {
-    background: linear-gradient(135deg, var(--primary) 0%, #34d399 100%);
+/* Couleur neutre pour le texte h1 hors highlight */
+.hero-content h1 span:not(.hero-highlight) {
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    color: inherit;
+}
+
+/* Couleur accent vive pour le nom de la marque dans le Hero */
+.hero-highlight {
+    display: inline;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    filter: none;
 }
+
+/* Light mode : var(--primary) vaut déjà l'orange foncé #c94e00 — aucune surcharge nécessaire */
+[data-theme="light"] .hero-highlight {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 
 .hero-content p {
     font-size: 1.1rem;
@@ -441,7 +474,7 @@ button, input, select, textarea {
     transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--primary-light) 0%, rgba(46, 196, 182, 0.1) 100%);
+    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.22) 0%, rgba(var(--primary-rgb), 0.05) 70%);
     filter: blur(40px);
     border-radius: 50%;
     z-index: 1;
@@ -1581,9 +1614,9 @@ input[type="checkbox"]:checked + .option-checkbox i {
 }
 
 .alert-success {
-    background-color: rgba(46, 196, 182, 0.15);
-    border: 1px solid rgba(46, 196, 182, 0.3);
-    color: #2ec4b6;
+    background-color: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
 }
 
 .alert-danger {
@@ -1722,22 +1755,23 @@ input[type="checkbox"]:checked + .option-checkbox i {
 }
 
 /* =========================================================================
-   12. RESPONSIVE MEDIA QUERIES (Mobile First structure adjustments)
+   12. RESPONSIVE MEDIA QUERIES (Mobile & Tablette unifiés et sans décalage)
    ========================================================================= */
+
+/* --- Écrans Intermédiaires / Tablettes (<= 992px) --- */
 @media (max-width: 992px) {
-    /* Base layouts */
     .hero-grid, .about-teaser-grid, .contact-grid, .cart-layout, .footer-grid {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 32px;
     }
     
     .hero {
-        padding: 80px 0 60px;
+        padding: 60px 0 40px;
         text-align: center;
     }
     
     .hero-content h1 {
-        font-size: 2.8rem;
+        font-size: 2.6rem;
     }
     
     .hero-content p {
@@ -1747,14 +1781,11 @@ input[type="checkbox"]:checked + .option-checkbox i {
     
     .hero-buttons {
         justify-content: center;
+        flex-wrap: wrap;
     }
     
     .features-grid {
         grid-template-columns: 1fr;
-    }
-    
-    .about-teaser-img {
-        order: -1;
     }
     
     .modal-grid {
@@ -1762,43 +1793,51 @@ input[type="checkbox"]:checked + .option-checkbox i {
     }
     
     .modal-image-wrapper {
-        min-height: 200px;
-        height: 200px;
+        min-height: 180px;
+        height: 180px;
     }
     
     .modal-body {
-        padding: 24px;
+        padding: 20px;
     }
-    
-    .admin-sidebar {
-        display: none; /* In dashboard we need dynamic handling or menu icon */
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
     }
 }
 
+/* --- Smartphones & Mobiles (<= 768px) --- */
 @media (max-width: 768px) {
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* Menu de navigation mobile déroulant plein écran */
     .navbar-container {
         position: relative;
     }
     
     .nav-menu {
-        display: flex !important; /* On force le flex */
-        position: absolute;
+        display: flex !important;
+        position: fixed;
         top: var(--header-height);
-        left: -24px;
-        right: -24px;
+        left: 0;
+        right: 0;
+        width: 100vw;
         background-color: var(--bg-card);
         border-bottom: 1px solid var(--border-color);
         flex-direction: column;
-        padding: 24px;
-        gap: 20px;
-        box-shadow: var(--shadow-md);
-        z-index: 99;
+        padding: 20px 24px;
+        gap: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 999;
         
-        /* Transition fluide */
         opacity: 0;
         transform: translateY(-10px);
         pointer-events: none;
-        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: opacity 0.3s ease, transform 0.3s ease;
     }
     
     .nav-menu.active {
@@ -1809,17 +1848,65 @@ input[type="checkbox"]:checked + .option-checkbox i {
     
     .mobile-nav-toggle {
         display: block;
+        color: var(--text-primary);
     }
-    
+
+    /* Catalogue & Recherche mobile */
+    .search-filter-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    /* Filtres par catégories en scroll horizontal fluide sur mobile */
+    .categories-filter {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        gap: 8px;
+    }
+
+    .filter-tab {
+        scroll-snap-align: start;
+        flex-shrink: 0;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    /* Cartes de produits sur 1 seule colonne centrée */
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .product-card {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Panier & Récapitulatif mobile */
     .cart-item {
         flex-direction: column;
         align-items: flex-start;
         position: relative;
+        padding: 16px;
     }
     
     .cart-item-img {
         width: 100%;
-        height: 150px;
+        height: 140px;
+    }
+
+    .cart-item-details {
+        width: 100%;
     }
     
     .cart-item-actions {
@@ -1827,284 +1914,160 @@ input[type="checkbox"]:checked + .option-checkbox i {
         justify-content: space-between;
         width: 100%;
         align-items: center;
+        margin-top: 8px;
     }
     
     .cart-item-remove {
         position: absolute;
-        top: 20px;
-        right: 20px;
-        background-color: rgba(0, 0, 0, 0.5);
-        width: 32px;
-        height: 32px;
+        top: 24px;
+        right: 24px;
+        background-color: rgba(0, 0, 0, 0.6);
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #ffffff;
+        z-index: 2;
+    }
+
+    .cart-summary {
+        padding: 20px;
     }
     
     .floating-whatsapp {
         bottom: 20px;
-        right: 20px;
-        width: 52px;
-        height: 52px;
-        font-size: 1.7rem;
+        right: 16px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.6rem;
+    }
+
+    /* Layout Administration Mobile */
+    .admin-layout {
+        flex-direction: column;
     }
     
+    .admin-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        display: block;
+    }
+    
+    .admin-menu {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 12px 16px;
+        gap: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-menu-link {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
     .admin-navbar {
-        padding: 0 20px;
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .admin-navbar-title h2 {
+        font-size: 1rem;
+    }
+
+    .admin-user-name {
+        display: none;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 16px;
+        border-radius: var(--radius-sm);
+    }
+
+    .admin-table {
+        min-width: 580px;
+    }
+
+    /* Correction des Modales UI sur Mobile */
+    .modal {
+        padding: 12px;
+    }
+
+    .modal-container,
+    .modal .form-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px !important;
+        margin: 0 !important;
+        border-radius: 12px !important;
+        max-height: 92vh;
+        overflow-y: auto;
     }
 }
 
-/* =========================================================================
-   BOUTON THEME TOGGLE (Dark / Light)
-   ========================================================================= */
-.theme-toggle {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    background: none;
-    border: 1px solid var(--border-color);
-    color: var(--text-body);
-    font-size: 1.05rem;
-    transition: var(--transition-smooth);
-    flex-shrink: 0;
+/* --- Petit Écran Mobile (<= 480px) --- */
+@media (max-width: 480px) {
+    h1 { font-size: 1.8rem !important; }
+    h2 { font-size: 1.35rem !important; }
+
+    .nav-brand {
+        font-size: 1.2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 0.95rem;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .product-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .product-card-footer .btn {
+        width: 100%;
+    }
+
+    .footer-grid {
+        gap: 24px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
 }
-
-.theme-toggle:hover {
-    background-color: var(--primary-light);
-    border-color: var(--primary);
-    color: var(--primary);
-    transform: rotate(20deg) scale(1.08);
+ 180px;
+        object-fit: cover;
+    }
 }
-
-/* Icône soleil visible en dark mode, lune en light mode */
-.theme-toggle .icon-sun  { display: none; }
-.theme-toggle .icon-moon { display: inline; }
-
-[data-theme="light"] .theme-toggle .icon-sun  { display: inline; }
-[data-theme="light"] .theme-toggle .icon-moon { display: none; }
-
-/* =========================================================================
-   LIGHT MODE — Surcharges des couleurs hardcodées
-   ========================================================================= */
-
-/* --- Textes secondaires --- */
-[data-theme="light"] .section-header p,
-[data-theme="light"] .feature-card p,
-[data-theme="light"] .about-teaser-content p,
-[data-theme="light"] .contact-info-text p,
-[data-theme="light"] .product-card-desc,
-[data-theme="light"] .modal-desc,
-[data-theme="light"] .footer-links,
-[data-theme="light"] .cart-item-options,
-[data-theme="light"] .legal-content p,
-[data-theme="light"] .cart-empty p {
-    color: var(--text-muted);
-}
-
-[data-theme="light"] .footer-desc,
-[data-theme="light"] .footer-bottom {
-    color: var(--text-faint);
-}
-
-/* --- Cartes produits --- */
-[data-theme="light"] .product-card {
-    box-shadow: var(--shadow-sm);
-}
-
-[data-theme="light"] .product-card:hover {
-    box-shadow: var(--shadow-md);
-}
-
-[data-theme="light"] .product-card-img-wrapper {
-    background-color: #f0eee9;
-}
-
-/* --- Formulaires --- */
-[data-theme="light"] .form-control {
-    color: var(--text-primary);
-}
-
-[data-theme="light"] .form-control::placeholder {
-    color: var(--text-faint);
-}
-
-/* --- Barre de recherche --- */
-[data-theme="light"] .search-bar input {
-    color: var(--text-primary);
-}
-
-[data-theme="light"] .search-bar input::placeholder {
-    color: var(--text-faint);
-}
-
-[data-theme="light"] .search-bar i {
-    color: var(--text-faint);
-}
-
-/* --- Carte empty état --- */
-[data-theme="light"] .cart-empty i {
-    color: #c8c8d0;
-}
-
-[data-theme="light"] .cart-empty h2 {
-    color: var(--text-primary);
-}
-
-/* --- Stat cards admin --- */
-[data-theme="light"] .stat-card-details h4 {
-    color: var(--text-muted);
-}
-
-[data-theme="light"] .stat-card-val {
-    color: var(--text-primary);
-}
-
-/* --- Tables admin --- */
-[data-theme="light"] .admin-table th {
-    color: var(--text-primary);
-    background-color: rgba(0, 0, 0, 0.02);
-}
-
-[data-theme="light"] .admin-table td {
-    color: var(--text-body);
-}
-
-[data-theme="light"] .admin-table tr:hover td {
-    background-color: rgba(0, 0, 0, 0.02);
-}
-
-/* --- Nav links & Header Actions --- */
-[data-theme="light"] .nav-brand {
-    color: var(--text-primary) !important;
-}
-
-[data-theme="light"] .nav-link {
-    color: var(--text-body);
-}
-
-[data-theme="light"] .nav-link:hover {
-    color: var(--primary);
-}
-
-[data-theme="light"] .cart-icon-btn,
-[data-theme="light"] .mobile-nav-toggle {
-    color: var(--text-primary) !important;
-}
-
-/* --- Boutons secondaires en Light Mode (Notre Histoire) --- */
-[data-theme="light"] .btn-secondary {
-    background-color: var(--bg-input) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="light"] .btn-secondary:hover {
-    background-color: rgba(var(--primary-rgb), 0.1) !important;
-    border-color: var(--primary);
-    color: var(--primary) !important;
-}
-
-/* --- Footer --- */
-[data-theme="light"] .footer {
-    background-color: #eeece7;
-}
-
-[data-theme="light"] .footer-brand {
-    color: var(--text-primary);
-}
-
-/* --- Icônes Réseaux Sociaux Footer --- */
-[data-theme="light"] .social-link {
-    background-color: var(--bg-input) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="light"] .social-link:hover {
-    background-color: var(--primary) !important;
-    color: #ffffff !important;
-    border-color: var(--primary);
-}
-
-/* --- Page loader light mode --- */
-[data-theme="light"] #pageLoader {
-    background-color: var(--bg-main);
-}
-
-[data-theme="light"] .loader-logo {
-    color: var(--text-primary);
-}
-
-/* --- Map placeholder --- */
-[data-theme="light"] .map-placeholder {
-    background-color: #e8e6e0;
-    color: var(--text-muted);
-}
-
-/* --- Hero deco circles light mode --- */
-[data-theme="light"] .hero-deco-circle {
-    border-color: rgba(var(--primary-rgb), 0.18);
-}
-
-/* --- Cart summary --- */
-[data-theme="light"] .cart-summary h3 {
-    color: var(--text-primary);
-}
-
-/* --- Toast en light mode --- */
-[data-theme="light"] .toast {
-    background-color: #ffffff;
-    border-color: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="light"] .toast-title {
-    color: var(--text-primary);
-}
-
-[data-theme="light"] .toast-message {
-    color: var(--text-muted);
-}
-
-[data-theme="light"] .toast-close {
-    color: var(--text-faint);
-}
-
-/* --- Admin navbar light --- */
-[data-theme="light"] .admin-navbar {
-    background-color: #ffffff;
-    border-bottom-color: var(--border-color);
-}
-
-/* --- Transition globale sur tous les éléments clés --- */
-*, *::before, *::after {
-    transition-property: background-color, border-color, color, box-shadow;
-    transition-duration: 0.3s;
-    transition-timing-function: ease;
-}
-
-/* Désactiver la transition globale pour les animations intentionnelles */
-.modal, .modal-container, .floating-whatsapp, .btn, .product-card, .nav-link,
-[data-reveal], .hero-image, .loader-spinner, .toast, .cart-badge,
-.filter-tab, .feature-card, .social-link, .action-btn {
-    transition: unset;
-}
-/* Re-appliquer leurs transitions propres */
-.modal           { transition: opacity 0.3s ease; }
-.modal-container { transition: transform 0.3s ease; }
-.btn             { transition: var(--transition-smooth); }
-.product-card    { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease; }
-.nav-link        { transition: var(--transition-fast); }
-.feature-card    { transition: var(--transition-smooth); }
-.social-link     { transition: var(--transition-fast); }
-.filter-tab      { transition: var(--transition-smooth); }
-.action-btn      { transition: var(--transition-fast); }
-[data-reveal]    { transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-.floating-whatsapp { transition: var(--transition-smooth); }
-.cart-badge      { display: flex; }
-

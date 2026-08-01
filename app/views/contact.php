@@ -76,7 +76,7 @@ $email = $siteSettings['contact_email'] ?? 'contact@chawarmapremium.com';
         <!-- Formulaire de contact -->
         <div class="form-card">
             <h3>Envoyez-nous un message</h3>
-            <form action="#" method="POST" onsubmit="alert('Votre message a bien été envoyé ! Nous vous répondrons dans les plus brefs délais.'); return false;">
+            <form action="#" method="POST" onsubmit="handleContactSubmit(event)">
                 <div class="form-group">
                     <label class="form-label" for="nom">Nom complet</label>
                     <input type="text" id="nom" name="nom" class="form-control" placeholder="Ex: Jean Dupont" required>
@@ -104,5 +104,13 @@ $email = $siteSettings['contact_email'] ?? 'contact@chawarmapremium.com';
         </div>
     </div>
 </section>
+
+<script>
+function handleContactSubmit(e) {
+    e.preventDefault();
+    showToast('Votre message a bien été envoyé ! Nous vous répondrons dans les plus brefs délais.', 'success', 5000, 'Message transmis 🎉');
+    e.target.reset();
+}
+</script>
 
 <?php require APPROOT . '/views/layout/footer.php'; ?>

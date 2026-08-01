@@ -14,7 +14,7 @@ define('APPROOT', dirname(dirname(__FILE__)));
 define('URLROOT', ''); // Laisser vide pour la détection dynamique, ou spécifier (ex: http://localhost/chawarma)
 
 // Informations générales par défaut
-define('SITENAME', 'Shawarma Elite');
+define('SITENAME', 'Franco fast-food');
 define('DEFAULT_PHONE', '2290190307615'); // WhatsApp Bénin (Cocotomey) avec code pays
 
 // Démarrage de la session de manière sécurisée

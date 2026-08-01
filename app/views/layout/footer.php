@@ -18,10 +18,10 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
             <!-- Colonne 1 : Description -->
             <div data-reveal="fade-up">
                 <div class="footer-brand">
-                    <i class="fa-solid fa-fire-burner" aria-hidden="true"></i> Chawarma<span>Elite</span>
+                    <i class="fa-solid fa-fire-burner" aria-hidden="true"></i> Franco<span>fast-food</span>
                 </div>
                 <p class="footer-desc">
-                    L'excellence de la street-food revisitée avec des produits frais, locaux et des marinades faites maison.
+                    L'excellence du fast-food artisanal préparé avec des produits frais et des ingrédients de qualité.
                 </p>
                 <div class="social-links">
                     <a href="<?php echo htmlspecialchars($fbLink); ?>" target="_blank" rel="noopener noreferrer"
@@ -80,7 +80,7 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
         </div>
 
         <div class="container footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Chawarma Premium. Tous droits réservés.</p>
+            <p>&copy; <?php echo date('Y'); ?> Franco fast-food. Tous droits réservés.</p>
             <p>Conçu pour une expérience mobile optimale 📱</p>
         </div>
     </footer>

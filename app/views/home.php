@@ -4,11 +4,23 @@
  */
 require APPROOT . '/views/layout/header.php';
 
-$heroTitre    = $siteSettings['accueil_hero_titre']          ?? 'L\'expérience ultime du Chawarma Premium';
-$heroSousTitre = $siteSettings['accueil_hero_soustitre']     ?? 'Des ingrédients rigoureusement sélectionnés et des marinades maison.';
-$aProposTitre  = $siteSettings['accueil_a_propos_titre']      ?? 'Une passion familiale pour le goût';
-$aProposDesc   = $siteSettings['accueil_a_propos_description'] ?? 'Notre restaurant réinvente la street-food traditionnelle avec des viandes marinées 24h.';
-$adresse       = $siteSettings['contact_adresse']              ?? '123 Avenue de la Gastronomie, Paris';
+$heroTitreRaw = $siteSettings['accueil_hero_titre'] ?? '';
+if (empty($heroTitreRaw) || strripos($heroTitreRaw, 'Shawarma') !== false || strripos($heroTitreRaw, 'Chawarma Premium') !== false) {
+    $heroTitre = 'Franco Fast-Food : L\'Expérience Gourmande Ultime !';
+} else {
+    $heroTitre = $heroTitreRaw;
+}
+
+$heroSousTitreRaw = $siteSettings['accueil_hero_soustitre'] ?? '';
+if (empty($heroSousTitreRaw) || strripos($heroSousTitreRaw, 'marinades traditionnelles') !== false) {
+    $heroSousTitre = 'Succombez à nos recettes artisanales préparées à la minute : chawarmas juteux, paninis fondants et sandwichs croustillants. Commandez en 1 clic !';
+} else {
+    $heroSousTitre = $heroSousTitreRaw;
+}
+
+$aProposTitre  = $siteSettings['accueil_a_propos_titre']      ?? 'La passion du goût chez Franco Fast-Food';
+$aProposDesc   = $siteSettings['accueil_a_propos_description'] ?? 'Chez Franco fast-food, nous réinventons la restauration rapide avec des ingrédients frais, des sauces faites maison et un savoir-faire authentique.';
+$adresse       = $siteSettings['contact_adresse']              ?? 'Cocotomey, Bénin';
 $horaires      = $siteSettings['site_horaires']                ?? 'Lun - Dim: 11h30 - 23h30';
 $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
 ?>
@@ -24,7 +36,7 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
     <div class="container hero-grid">
         <!-- Contenu textuel -->
         <div class="hero-content" data-reveal="fade-right">
-            <h1><span><?php echo htmlspecialchars($heroTitre); ?></span></h1>
+            <h1><span class="hero-highlight">Franco Fast-Food</span> : L'Expérience Gourmande Ultime !</h1>
             <p><?php echo htmlspecialchars($heroSousTitre); ?></p>
             <div class="hero-buttons">
                 <a href="<?php echo DYNAMIC_URLROOT; ?>/menu" class="btn btn-primary" id="heroCTAPrimary">
@@ -40,7 +52,7 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
         <div class="hero-image-wrapper" data-reveal="fade-left" data-reveal-delay="100">
             <div class="hero-blob" aria-hidden="true"></div>
             <img src="<?php echo DYNAMIC_URLROOT; ?>/assets/images/hero_chawarma.png"
-                 alt="Délicieux Chawarma Premium — Spécialité de notre restaurant"
+                 alt="Spécialités Franco fast-food — Fast-food de qualité"
                  class="hero-image"
                  width="500"
                  height="500"

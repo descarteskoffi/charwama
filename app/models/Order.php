@@ -266,10 +266,10 @@ class Order extends Model {
         // 6. Évolution des ventes quotidiennes (pour les graphiques)
         // Si période = aujourd'hui, on fait une évolution par heure, sinon par jour
         $groupBy = "DATE(date_creation)";
-        $selectDate = "DATE_FORMAT(date_creation, '%d/%m') as label";
+        $selectDate = "DATE_FORMAT(MIN(date_creation), '%d/%m') as label";
         if ($period === 'today') {
             $groupBy = "HOUR(date_creation)";
-            $selectDate = "DATE_FORMAT(date_creation, '%Hh') as label";
+            $selectDate = "DATE_FORMAT(MIN(date_creation), '%Hh') as label";
         }
         
         $stmtEvol = $this->db->query("
@@ -277,7 +277,7 @@ class Order extends Model {
             FROM commandes
             WHERE {$dateCondition} AND statut != 'Annulée'
             GROUP BY {$groupBy}
-            ORDER BY date_creation ASC
+            ORDER BY MIN(date_creation) ASC
         ");
         $stmtEvol->execute($params);
         $stats['evolution'] = $stmtEvol->fetchAll();

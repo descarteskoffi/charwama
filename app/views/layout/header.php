@@ -3,25 +3,24 @@
  * Layout commun - En-tête (Header)
  */
 $activePage = $activePage ?? '';
-$title = $title ?? 'Chawarma Premium';
-$title = $title ?? 'Chawarma Elite';
+$title = $title ?? 'Franco fast-food';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($title); ?> — Chawarma Elite | Commander sur WhatsApp</title>
+    <title><?php echo htmlspecialchars($title); ?> — Franco fast-food | Commander sur WhatsApp</title>
 
     <!-- Meta SEO -->
-    <meta name="description" content="Découvrez notre menu de chawarmas juteux, paninis croustillants et sandwichs gourmands. Commandez facilement via WhatsApp, livraison ou à emporter !">
+    <meta name="description" content="Découvrez le menu de Franco fast-food : chawarmas juteux, paninis croustillants et sandwichs gourmands. Commandez facilement via WhatsApp !">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#ff6b08">
 
     <!-- Open Graph / Réseaux sociaux -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="<?php echo htmlspecialchars($title); ?> — Chawarma Elite">
-    <meta property="og:description" content="Chawarma, paninis et sandwichs artisanaux. Commandez maintenant via WhatsApp !">
+    <meta property="og:title" content="<?php echo htmlspecialchars($title); ?> — Franco fast-food">
+    <meta property="og:description" content="Franco fast-food - Chawarma, paninis et sandwichs artisanaux. Commandez maintenant via WhatsApp !">
     <meta property="og:locale" content="fr_FR">
 
     <!-- Préchargement des polices pour performance -->
@@ -57,7 +56,7 @@ $title = $title ?? 'Chawarma Elite';
     <div id="pageLoader" aria-hidden="true">
         <div class="loader-logo">
             <i class="fa-solid fa-fire-burner"></i>
-            Chawarma<span>Elite</span>
+            Franco <span>fast-food</span>
         </div>
         <div class="loader-spinner"></div>
     </div>
@@ -69,9 +68,9 @@ $title = $title ?? 'Chawarma Elite';
     <nav class="navbar" role="navigation" aria-label="Navigation principale">
         <div class="container navbar-container">
             <!-- Logo / Marque -->
-            <a href="<?php echo DYNAMIC_URLROOT; ?>/" class="nav-brand" aria-label="Chawarma Elite - Accueil">
+            <a href="<?php echo DYNAMIC_URLROOT; ?>/" class="nav-brand" aria-label="Franco fast-food - Accueil">
                 <i class="fa-solid fa-fire-burner" aria-hidden="true"></i>
-                <span class="nav-brand-text">Chawarma<span>Elite</span></span>
+                <span class="nav-brand-text">Franco <span>fast-food</span></span>
             </a>
 
             <!-- Menu de Navigation -->
@@ -124,9 +123,8 @@ $title = $title ?? 'Chawarma Elite';
                 <button class="theme-toggle"
                         id="themeToggleBtn"
                         title="Changer le thème"
-                        aria-label="Basculer entre mode sombre et mode clair">
-                    <i class="fa-solid fa-sun icon-sun" aria-hidden="true"></i>
-                    <i class="fa-solid fa-moon icon-moon" aria-hidden="true"></i>
+                        aria-label="Changer le thème">
+                    <i class="fa-solid fa-moon" id="themeIcon" aria-hidden="true"></i>
                 </button>
 
                 <button class="mobile-nav-toggle"

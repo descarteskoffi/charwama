@@ -104,14 +104,17 @@ function initTheme() {
     if (!btn) return;
 
     const applyTheme = (theme) => {
+        const icon = btn.querySelector('#themeIcon') || btn.querySelector('i');
         if (theme === 'light') {
             document.documentElement.setAttribute('data-theme', 'light');
             btn.setAttribute('aria-label', 'Passer en mode sombre');
             btn.setAttribute('title', 'Passer en mode sombre');
+            if (icon) icon.className = 'fa-solid fa-sun';
         } else {
             document.documentElement.removeAttribute('data-theme');
             btn.setAttribute('aria-label', 'Passer en mode clair');
             btn.setAttribute('title', 'Passer en mode clair');
+            if (icon) icon.className = 'fa-solid fa-moon';
         }
         localStorage.setItem('chawarma_theme', theme);
     };

@@ -58,6 +58,50 @@ CREATE TABLE IF NOT EXISTS logs_connexion (
     statut VARCHAR(50) NOT NULL -- "succes", "echec_mdp", "bloque"
 ) ENGINE=InnoDB;
 
+-- 7. Table des Tables du Restaurant & QR Codes
+CREATE TABLE IF NOT EXISTS tables_restaurant (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_table VARCHAR(50) NOT NULL UNIQUE,
+    nom_table VARCHAR(100) DEFAULT NULL,
+    statut TINYINT(1) NOT NULL DEFAULT 1 -- 1 = Actif, 0 = Inactif
+) ENGINE=InnoDB;
+
+-- 8. Table des Commandes Clients
+CREATE TABLE IF NOT EXISTS commandes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_commande VARCHAR(50) NOT NULL UNIQUE,
+    nom_client VARCHAR(150) NOT NULL,
+    telephone VARCHAR(50) DEFAULT NULL,
+    mode_reception VARCHAR(50) NOT NULL, -- "Sur place", "A emporter", "Livraison"
+    table_numero VARCHAR(50) DEFAULT NULL,
+    adresse_livraison TEXT DEFAULT NULL,
+    notes TEXT DEFAULT NULL,
+    prix_total DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    statut VARCHAR(50) NOT NULL DEFAULT 'Nouvelle commande', -- "Nouvelle commande", "Confirmée", "En préparation", "Prête", "En livraison", "Terminée", "Annulée"
+    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- 9. Table des Produits d'une Commande
+CREATE TABLE IF NOT EXISTS commande_produits (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    commande_id INT NOT NULL,
+    produit_id INT DEFAULT NULL,
+    nom_produit VARCHAR(150) NOT NULL,
+    prix_unitaire DECIMAL(10, 2) NOT NULL,
+    quantite INT NOT NULL DEFAULT 1,
+    options_texte TEXT DEFAULT NULL,
+    FOREIGN KEY (commande_id) REFERENCES commandes(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 10. Table des Horaires Hebdomadaires du Restaurant
+CREATE TABLE IF NOT EXISTS horaires_restaurant (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    jour_semaine INT NOT NULL UNIQUE, -- 0 (Dimanche) à 6 (Samedi)
+    ouvert TINYINT(1) NOT NULL DEFAULT 1,
+    heure_ouverture TIME NOT NULL DEFAULT '11:30:00',
+    heure_fermeture TIME NOT NULL DEFAULT '23:30:00'
+) ENGINE=InnoDB;
+
 -- =========================================================================
 -- SEEDING : Insertion des données initiales par défaut
 -- =========================================================================
@@ -99,36 +143,45 @@ INSERT INTO produits (nom, description, prix, categorie_id, image, statut) VALUE
 ('Eau Minérale Naturelle', 'Bouteille de 50cl.', 300.00, 4, 'eau_minerale.webp', 1);
 
 -- Options de produits
--- Suppléments Chawarma Poulet (produit_id: 1)
 INSERT INTO options_produits (produit_id, nom_option, prix_supplement) VALUES
 (1, 'Format XXL', 1000.00),
 (1, 'Supplément Fromage fondu', 300.00),
-(1, 'Sauce Algérienne extra', 0.00);
-
--- Suppléments Chawarma Viande (produit_id: 2)
-INSERT INTO options_produits (produit_id, nom_option, prix_supplement) VALUES
+(1, 'Sauce Algérienne extra', 0.00),
 (2, 'Format XXL', 1200.00),
-(2, 'Supplément double fromage', 400.00);
-
--- Suppléments Panini Poulet (produit_id: 4)
-INSERT INTO options_produits (produit_id, nom_option, prix_supplement) VALUES
+(2, 'Supplément double fromage', 400.00),
 (4, 'Supplément frites à l\'intérieur', 200.00),
-(4, 'Double mozzarella', 300.00);
-
--- Suppléments Sandwich Escalope (produit_id: 7)
-INSERT INTO options_produits (produit_id, nom_option, prix_supplement) VALUES
+(4, 'Double mozzarella', 300.00),
 (7, 'Supplément bacon', 400.00),
 (7, 'Fromage cheddar', 200.00);
 
+-- Tables du restaurant par défaut
+INSERT INTO tables_restaurant (numero_table, nom_table, statut) VALUES
+('1', 'Table 1 (Salle)', 1),
+('2', 'Table 2 (Salle)', 1),
+('3', 'Table 3 (Terrasse)', 1),
+('4', 'Table 4 (Terrasse)', 1),
+('5', 'Table VIP', 1);
+
+-- Horaires par défaut de la semaine (0 = Dimanche à 6 = Samedi)
+INSERT INTO horaires_restaurant (jour_semaine, ouvert, heure_ouverture, heure_fermeture) VALUES
+(0, 1, '11:30:00', '23:30:00'),
+(1, 1, '11:30:00', '23:30:00'),
+(2, 1, '11:30:00', '23:30:00'),
+(3, 1, '11:30:00', '23:30:00'),
+(4, 1, '11:30:00', '23:30:00'),
+(5, 1, '11:30:00', '00:30:00'),
+(6, 1, '11:30:00', '00:30:00');
+
 -- Paramètres Généraux
 INSERT INTO parametres_site (cle, valeur) VALUES 
-('whatsapp_phone', '2290190307615'), -- Numéro de destination de commande Bénin
+('whatsapp_phone', '2290190307615'),
 ('contact_email', 'contact@shawarmaelite.com'),
 ('contact_adresse', 'Cocotomey, Bénin'),
 ('site_horaires', 'Lundi au Dimanche de 11h30 à 23h30 non-stop'),
 ('lien_facebook', 'https://facebook.com/shawarmaelite'),
 ('lien_instagram', 'https://instagram.com/shawarmaelite'),
-('accueil_hero_titre', 'L\'expérience ultime de Shawarma Elite'),
-('accueil_hero_soustitre', 'Des ingrédients rigoureusement sélectionnés, des marinades traditionnelles et un savoir-faire authentique pour réveiller vos papilles.'),
-('accueil_a_propos_titre', 'Une passion familiale pour le goût'),
-('accueil_a_propos_description', 'Depuis 2020, notre restaurant s\'est donné pour mission de réinventer la street-food. Nos viandes sont marinées pendant 24 heures selon une recette tenue secrète, nos sauces sont montées chaque matin, et nos pains sont livrés frais par notre artisan boulanger local. Goûtez la différence !');
+('accueil_hero_titre', 'Franco Fast-Food : L\'Expérience Gourmande Ultime !'),
+('accueil_hero_soustitre', 'Succombez à nos recettes artisanales préparées à la minute : chawarmas juteux, paninis fondants et sandwichs croustillants. Commandez en 1 clic !'),
+('accueil_a_propos_titre', 'La passion du goût chez Franco Fast-Food'),
+('accueil_a_propos_description', 'Chez Franco fast-food, nous réinventons la restauration rapide avec des ingrédients frais, des sauces faites maison et un savoir-faire authentique.'),
+('etat_ouverture_manuel', 'ouvert');
