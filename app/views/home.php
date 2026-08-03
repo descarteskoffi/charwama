@@ -184,7 +184,7 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
     <div class="container about-teaser-grid">
         <div class="about-teaser-img" data-reveal="fade-right">
             <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=60"
-                 alt="Cuisine artisanale au restaurant Chawarma Premium"
+                 alt="Cuisine artisanale au restaurant Franco Fast-Food"
                  loading="lazy"
                  onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=60';">
         </div>

@@ -18,7 +18,7 @@ $email = $siteSettings['contact_email'] ?? 'contact@chawarmapremium.com';
                 Le présent site web, accessible à l'adresse <code><?php echo htmlspecialchars(DYNAMIC_URLROOT); ?></code>, est édité par :
             </p>
             <p>
-                <strong>Chawarma Premium</strong><br>
+                <strong>Franco fast-food</strong><br>
                 Adresse : <?php echo htmlspecialchars($adresse); ?><br>
                 E-mail de contact : <?php echo htmlspecialchars($email); ?><br>
                 Directeur de la publication : Le propriétaire du restaurant.
@@ -41,7 +41,7 @@ $email = $siteSettings['contact_email'] ?? 'contact@chawarmapremium.com';
         <section>
             <h2>3. Propriété intellectuelle</h2>
             <p>
-                L'ensemble du contenu de ce site (textes, images, graphismes, logos, icônes) est la propriété exclusive de Chawarma Premium, sauf mentions contraires. Toute reproduction, distribution ou modification de ces éléments est strictement interdite sans accord écrit préalable.
+                L'ensemble du contenu de ce site (textes, images, graphismes, logos, icônes) est la propriété exclusive de Franco fast-food, sauf mentions contraires. Toute reproduction, distribution ou modification de ces éléments est strictement interdite sans accord écrit préalable.
             </p>
         </section>
 

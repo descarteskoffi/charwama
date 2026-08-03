@@ -1,4 +1,4 @@
-# 📚 Guide d'Installation — Chawarma Premium
+# 📚 Guide d'Installation — Franco fast-food
 
 ## Prérequis techniques
 
@@ -206,4 +206,4 @@ Pour mettre à jour le site :
 
 ---
 
-*Guide rédigé pour Chawarma Premium — Version 1.0*
+*Guide rédigé pour Franco fast-food — Version 1.0*

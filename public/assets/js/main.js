@@ -1,5 +1,5 @@
 /**
- * main.js — Script Principal Chawarma Premium
+ * main.js — Script Principal Franco fast-food
  * Version 2.0 : Persistance des commandes en BDD, Gestion des tables/QR codes,
  *                Vérification d'ouverture, Récapitulatif de commande amélioré
  *
