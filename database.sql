@@ -1,7 +1,7 @@
 -- Script d'initialisation de la base de données Chawarma
 
-CREATE DATABASE IF NOT EXISTS chawarma_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE chawarma_db;
+CREATE DATABASE IF NOT EXISTS charwama_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE charwama_db;
 
 -- 1. Table des Administrateurs
 CREATE TABLE IF NOT EXISTS admins (
@@ -175,11 +175,11 @@ INSERT INTO horaires_restaurant (jour_semaine, ouvert, heure_ouverture, heure_fe
 -- Paramètres Généraux
 INSERT INTO parametres_site (cle, valeur) VALUES 
 ('whatsapp_phone', '2290165090839'),
-('contact_email', 'contact@shawarmaelite.com'),
+('contact_email', 'contact@francofastfood.com'),
 ('contact_adresse', 'Cocotomey, Bénin'),
 ('site_horaires', 'Lundi au Dimanche de 11h30 à 23h30 non-stop'),
-('lien_facebook', 'https://facebook.com/shawarmaelite'),
-('lien_instagram', 'https://instagram.com/shawarmaelite'),
+('lien_facebook', 'https://facebook.com/francofastfood'),
+('lien_instagram', 'https://instagram.com/francofastfood'),
 ('accueil_hero_titre', 'Franco Fast-Food : L\'Expérience Gourmande Ultime !'),
 ('accueil_hero_soustitre', 'Succombez à nos recettes artisanales préparées à la minute : chawarmas juteux, paninis fondants et sandwichs croustillants. Commandez en 1 clic !'),
 ('accueil_a_propos_titre', 'La passion du goût chez Franco Fast-Food'),
