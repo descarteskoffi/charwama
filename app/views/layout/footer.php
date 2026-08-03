@@ -81,7 +81,6 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
 
         <div class="container footer-bottom">
             <p>&copy; <?php echo date('Y'); ?> Franco fast-food. Tous droits réservés.</p>
-            <p>Conçu pour une expérience mobile optimale 📱</p>
         </div>
     </footer>
 
