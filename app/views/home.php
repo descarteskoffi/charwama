@@ -51,12 +51,22 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
         <!-- Illustration / Image d'accroche -->
         <div class="hero-image-wrapper" data-reveal="fade-left" data-reveal-delay="100">
             <div class="hero-blob" aria-hidden="true"></div>
-            <img src="<?php echo DYNAMIC_URLROOT; ?>/assets/images/hero_chawarma.png"
-                 alt="Spécialités Franco fast-food — Fast-food de qualité"
-                 class="hero-image"
-                 width="500"
-                 height="500"
-                 onerror="this.src='https://images.unsplash.com/photo-1561651823-34fed022540d?w=500&auto=format&fit=crop&q=60';">
+            
+            <video id="heroVideo1" 
+                   src="<?php echo DYNAMIC_URLROOT; ?>/assets/video/pizza2.mp4" 
+                   class="hero-video active" 
+                   autoplay 
+                   muted 
+                   playsinline 
+                   preload="auto"
+                   aria-label="Vidéo de présentation des produits Franco Fast-Food"></video>
+            <video id="heroVideo2" 
+                   src="<?php echo DYNAMIC_URLROOT; ?>/assets/video/hamburger.mp4" 
+                   class="hero-video" 
+                   muted 
+                   playsinline 
+                   preload="auto"
+                   aria-label="Vidéo de présentation des produits Franco Fast-Food"></video>
         </div>
     </div>
 </section>

@@ -117,6 +117,7 @@ $title = $title ?? 'Franco fast-food';
                    aria-label="Voir mon panier">
                     <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
                     <span class="cart-badge" id="cartBadge" aria-label="Nombre d'articles dans le panier">0</span>
+                    <span class="cart-label">Panier</span>
                 </a>
 
                 <!-- Bouton Dark / Light Mode -->

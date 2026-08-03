@@ -95,6 +95,40 @@
     --hero-bg: radial-gradient(circle at 75% 25%, rgba(var(--primary-rgb), 0.08) 0%, transparent 65%);
 }
 
+/* Light Mode - Surcharges supplémentaires pour visibilité */
+[data-theme="light"] .btn-secondary {
+    background-color: #e5e5e5;
+    color: #1c1a1e;
+    border: 1px solid rgba(28, 26, 30, 0.15);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+    background-color: #d0d0d0;
+    color: #1c1a1e;
+}
+
+[data-theme="light"] .form-control,
+[data-theme="light"] select.form-control,
+[data-theme="light"] select.form-control option {
+    color: #1c1a1e;
+    background-color: #f2efe9;
+}
+
+[data-theme="light"] .footer-section-title {
+    color: #1c1a1e;
+}
+
+[data-theme="light"] .social-link {
+    color: #1c1a1e;
+    border-color: rgba(28, 26, 30, 0.15);
+}
+
+[data-theme="light"] .social-link:hover {
+    background-color: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
+
 /* =========================================================================
    2. RESET & BASE STYLES
    ========================================================================= */
@@ -359,15 +393,25 @@ button, input, select, textarea {
     position: relative;
     cursor: pointer;
     font-size: 1.3rem;
-    color: #ffffff;
-    padding: 8px;
+    color: var(--text-primary);
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
     transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .cart-icon-btn:hover {
     background-color: rgba(255, 255, 255, 0.05);
     color: var(--primary);
+}
+
+.cart-label {
+    font-family: var(--font-titles);
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-block;
 }
 
 .cart-badge {
@@ -413,7 +457,7 @@ button, input, select, textarea {
 }
 
 .hero-content h1 {
-    font-size: 3.8rem;
+    font-size: 3rem;
     line-height: 1.1;
     margin-bottom: 24px;
     font-weight: 800;
@@ -450,7 +494,7 @@ button, input, select, textarea {
 
 
 .hero-content p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #a0a0a5;
     margin-bottom: 36px;
     max-width: 540px;
@@ -465,6 +509,12 @@ button, input, select, textarea {
     position: relative;
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 110%;
+    height: 100%;
+    min-height: 600px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
 }
 
 .hero-blob {
@@ -472,8 +522,8 @@ button, input, select, textarea {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
+    width: 120%;
+    height: 120%;
     background: radial-gradient(circle, rgba(var(--primary-rgb), 0.22) 0%, rgba(var(--primary-rgb), 0.05) 70%);
     filter: blur(40px);
     border-radius: 50%;
@@ -486,6 +536,26 @@ button, input, select, textarea {
     max-width: 90%;
     filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
     animation: float 6s ease-in-out infinite;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-lg);
+    filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.hero-video.active {
+    opacity: 1;
 }
 
 @keyframes float {
@@ -1317,6 +1387,100 @@ input[type="checkbox"]:checked + .option-checkbox i {
 }
 
 /* =========================================================================
+   10.5 CART CONFIRMATION MODAL
+   ========================================================================= */
+.cart-confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.cart-confirm-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.cart-confirm-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+}
+
+.cart-confirm-content {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.cart-confirm-modal.active .cart-confirm-content {
+    transform: scale(1);
+}
+
+.cart-confirm-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #ffffff;
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.cart-confirm-title {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.cart-confirm-message {
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    font-size: 1rem;
+}
+
+.cart-confirm-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cart-confirm-buttons .btn {
+    min-width: 180px;
+}
+
+/* =========================================================================
    11. BACK-OFFICE / ADMIN PANEL STYLES
    ========================================================================= */
 /* Admin Login Layout */
@@ -1851,6 +2015,11 @@ input[type="checkbox"]:checked + .option-checkbox i {
         color: var(--text-primary);
     }
 
+    /* Masquer le label Panier sur mobile */
+    .cart-label {
+        display: none;
+    }
+
     /* Catalogue & Recherche mobile */
     .search-filter-wrapper {
         flex-direction: column;
@@ -1884,6 +2053,21 @@ input[type="checkbox"]:checked + .option-checkbox i {
     .products-grid {
         grid-template-columns: 1fr;
         gap: 16px;
+    }
+
+    /* Hero Section - Responsive vidéo */
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .hero-image-wrapper {
+        max-width: 100%;
+        aspect-ratio: 16 / 9;
+    }
+
+    .hero-video {
+        border-radius: var(--radius-md);
     }
 
     .product-card {

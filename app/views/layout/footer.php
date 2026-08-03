@@ -95,6 +95,26 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
         <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
     </a>
 
+    <!-- Modale de confirmation d'ajout au panier -->
+    <div id="cartConfirmModal" class="cart-confirm-modal">
+        <div class="cart-confirm-overlay"></div>
+        <div class="cart-confirm-content">
+            <div class="cart-confirm-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="cart-confirm-title">Ajouté au panier !</h3>
+            <p class="cart-confirm-message" id="cartConfirmMessage"></p>
+            <div class="cart-confirm-buttons">
+                <button onclick="closeCartConfirmModal()" class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-arrow-left"></i> Continuer mes achats
+                </button>
+                <a href="<?php echo DYNAMIC_URLROOT; ?>/panier" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-shopping-cart"></i> Voir mon panier
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Variables JavaScript dynamiques -->
     <script>
         const DYNAMIC_URLROOT = "<?php echo DYNAMIC_URLROOT; ?>";

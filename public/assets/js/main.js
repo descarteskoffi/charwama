@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollReveal();
     initLazyImages();
     updateCartBadge();
+    initHeroVideoAlternation();
 
     // Détection de table depuis l'URL (QR code)
     detectTableFromUrl();
@@ -66,6 +67,54 @@ function initPageLoader() {
     setTimeout(() => {
         loader.classList.add('hidden');
     }, 2000);
+}
+
+/* =========================================================================
+   0. HERO VIDEO ALTERNATION - CROSSFADE TRANSITION
+   ========================================================================= */
+function initHeroVideoAlternation() {
+    const video1 = document.getElementById('heroVideo1');
+    const video2 = document.getElementById('heroVideo2');
+
+    if (!video1 || !video2) return;
+
+    let currentVideo = 1;
+
+    // Fonction pour alterner les vidéos avec fondu enchaîné
+    function switchVideo() {
+        if (currentVideo === 1) {
+            // Fondu de la video 1
+            video1.classList.remove('active');
+            
+            // Après un court délai, faire apparaître la video 2
+            setTimeout(() => {
+                video2.classList.add('active');
+                video2.play();
+            }, 500);
+            
+            currentVideo = 2;
+        } else {
+            // Fondu de la video 2
+            video2.classList.remove('active');
+            
+            // Après un court délai, faire apparaître la video 1
+            setTimeout(() => {
+                video1.classList.add('active');
+                video1.play();
+            }, 500);
+            
+            currentVideo = 1;
+        }
+    }
+
+    // Écouter la fin de chaque vidéo
+    video1.addEventListener('ended', () => {
+        switchVideo();
+    });
+
+    video2.addEventListener('ended', () => {
+        switchVideo();
+    });
 }
 
 /* =========================================================================
@@ -488,8 +537,48 @@ function addModalProductToCart() {
     addToCart(id, name, basePrice, image, qty, selectedOptions);
     closeProductModal();
 
-    showToast(`"${name}" a été ajouté à votre commande !`, 'success', 4000, 'Ajouté au panier');
+    // Afficher la modale de confirmation
+    showCartConfirmModal(name, qty);
 }
+
+/* =========================================================================
+   10.5 CART CONFIRMATION MODAL
+   ========================================================================= */
+function showCartConfirmModal(productName, quantity) {
+    const modal = document.getElementById('cartConfirmModal');
+    const message = document.getElementById('cartConfirmMessage');
+    
+    if (!modal || !message) return;
+    
+    const qtyText = quantity > 1 ? `${quantity} x ` : '';
+    message.textContent = `${qtyText}"${productName}" a été ajouté à votre panier avec succès !`;
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCartConfirmModal() {
+    const modal = document.getElementById('cartConfirmModal');
+    if (!modal) return;
+    
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Fermer avec la touche Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeCartConfirmModal();
+    }
+});
+
+// Fermer en cliquant sur l'overlay
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('cartConfirmModal');
+    if (modal && e.target.classList.contains('cart-confirm-overlay')) {
+        closeCartConfirmModal();
+    }
+});
 
 /* =========================================================================
    11. PAGE PANIER - RENDU & ACTIONS
