@@ -7,7 +7,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'chawarma_db');
+define('DB_NAME', 'charwama_db');
 
 // Chemins de l'application
 define('APPROOT', dirname(dirname(__FILE__)));
@@ -15,7 +15,7 @@ define('URLROOT', ''); // Laisser vide pour la détection dynamique, ou spécifi
 
 // Informations générales par défaut
 define('SITENAME', 'Franco fast-food');
-define('DEFAULT_PHONE', '2290190307615'); // WhatsApp Bénin (Cocotomey) avec code pays
+define('DEFAULT_PHONE', '2290165090839'); // WhatsApp Bénin (Cocotomey) avec code pays
 
 // Démarrage de la session de manière sécurisée
 if (session_status() === PHP_SESSION_NONE) {

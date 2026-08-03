@@ -174,7 +174,7 @@ INSERT INTO horaires_restaurant (jour_semaine, ouvert, heure_ouverture, heure_fe
 
 -- Paramètres Généraux
 INSERT INTO parametres_site (cle, valeur) VALUES 
-('whatsapp_phone', '2290190307615'),
+('whatsapp_phone', '2290165090839'),
 ('contact_email', 'contact@shawarmaelite.com'),
 ('contact_adresse', 'Cocotomey, Bénin'),
 ('site_horaires', 'Lundi au Dimanche de 11h30 à 23h30 non-stop'),
