@@ -53,7 +53,7 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
             <div class="hero-blob" aria-hidden="true"></div>
             
             <video id="heroVideo1" 
-                   src="<?php echo DYNAMIC_URLROOT; ?>/assets/video/pizza2.mp4" 
+                   src="<?php echo DYNAMIC_URLROOT; ?>/assets/video/pizza3.mp4" 
                    class="hero-video active" 
                    autoplay 
                    muted 
