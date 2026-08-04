@@ -950,7 +950,7 @@ textarea.form-control {
     font-family: var(--font-titles);
     font-weight: 700;
     font-size: 1.3rem;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .product-card-price span {
