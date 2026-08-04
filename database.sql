@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS categories (
     statut TINYINT(1) NOT NULL DEFAULT 1 -- 1 = Actif, 0 = Inactif
 ) ENGINE=InnoDB;
 
--- 3. Table des Produits
+-- 3. Table de Produits
 CREATE TABLE IF NOT EXISTS produits (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(150) NOT NULL,
