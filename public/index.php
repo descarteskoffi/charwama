@@ -34,7 +34,16 @@ if (!empty($basePath) && strpos($requestPath, $basePath) === 0) {
     // Extraire uniquement la partie après le basePath
     $routePath = substr($requestPath, strlen($basePath));
 } else {
-    $routePath = $requestPath;
+    $parentPath = dirname($basePath);
+    if ($parentPath === '/' || $parentPath === '\\') {
+        $parentPath = '';
+    }
+    if (!empty($parentPath) && strpos($requestPath, $parentPath) === 0) {
+        $basePath = $parentPath;
+        $routePath = substr($requestPath, strlen($basePath));
+    } else {
+        $routePath = $requestPath;
+    }
 }
 
 // Si la route est vide, forcer la racine

@@ -28,7 +28,8 @@ class Controller {
      * Redirige vers une URL donnée
      */
     public function redirect($url) {
-        header('Location: ' . URLROOT . '/' . ltrim($url, '/'));
+        $baseUrl = defined('DYNAMIC_URLROOT') && !empty(DYNAMIC_URLROOT) ? DYNAMIC_URLROOT : (defined('URLROOT') ? URLROOT : '');
+        header('Location: ' . $baseUrl . '/' . ltrim($url, '/'));
         exit();
     }
 
@@ -55,10 +56,10 @@ class Controller {
             foreach ($_POST as $key => $value) {
                 if (is_array($value)) {
                     $sanitized[$key] = array_map(function($val) {
-                        return htmlspecialchars(trim($val), ENT_QUOTES, 'UTF-8');
+                        return is_string($val) ? trim($val) : $val;
                     }, $value);
                 } else {
-                    $sanitized[$key] = htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
+                    $sanitized[$key] = is_string($value) ? trim($value) : $value;
                 }
             }
         }

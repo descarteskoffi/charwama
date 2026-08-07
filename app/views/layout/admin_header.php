@@ -16,6 +16,18 @@ $adminName = $_SESSION['admin_name'] ?? 'Administratrice';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
     <link rel="stylesheet" href="<?php echo DYNAMIC_URLROOT; ?>/assets/css/style.css">
+
+    <!-- Application immédiate du thème sauvegardé (évite le flash de la page) -->
+    <script>
+        (function() {
+            var saved = localStorage.getItem('chawarma_theme') || localStorage.getItem('theme');
+            if (saved === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
 </head>
 <body>
 
@@ -83,13 +95,64 @@ $adminName = $_SESSION['admin_name'] ?? 'Administratrice';
                 <div class="admin-navbar-title">
                     <h2><?php echo htmlspecialchars($title); ?></h2>
                 </div>
-                <div class="admin-user-info">
-                    <span class="admin-user-name"><?php echo htmlspecialchars($adminName); ?></span>
-                    <div class="admin-user-avatar">
-                        <?php echo strtoupper(substr($adminName, 0, 1)); ?>
+                <div class="admin-user-info" style="display: flex; align-items: center; gap: 16px;">
+                    <!-- Bouton Bascule Thème Clair / Sombre -->
+                    <button type="button" id="adminThemeToggle" title="Changer le thème (Sombre / Clair)" 
+                            style="background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: var(--radius-full); padding: 8px 16px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: var(--transition-fast); font-size: 0.85rem; font-family: var(--font-titles); font-weight: 600;">
+                        <i class="fa-solid fa-moon" id="adminThemeIcon" style="font-size: 1rem; color: var(--primary);"></i>
+                        <span id="adminThemeLabel">Mode Clair</span>
+                    </button>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="admin-user-name"><?php echo htmlspecialchars($adminName); ?></span>
+                        <div class="admin-user-avatar">
+                            <?php echo strtoupper(substr($adminName, 0, 1)); ?>
+                        </div>
                     </div>
                 </div>
             </header>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toggleBtn = document.getElementById('adminThemeToggle');
+                const icon = document.getElementById('adminThemeIcon');
+                const label = document.getElementById('adminThemeLabel');
+
+                function applyTheme(theme) {
+                    if (theme === 'light') {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                        localStorage.setItem('chawarma_theme', 'light');
+                        localStorage.setItem('theme', 'light');
+                        if (icon) {
+                            icon.className = 'fa-solid fa-sun';
+                            icon.style.color = '#ff9f45';
+                        }
+                        if (label) label.textContent = 'Mode Sombre';
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('chawarma_theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                        if (icon) {
+                            icon.className = 'fa-solid fa-moon';
+                            icon.style.color = 'var(--primary)';
+                        }
+                        if (label) label.textContent = 'Mode Clair';
+                    }
+                }
+
+                // Initialisation au chargement de la page
+                const initialTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('chawarma_theme') || 'dark';
+                applyTheme(initialTheme);
+
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function() {
+                        const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+                        const newTheme = current === 'light' ? 'dark' : 'light';
+                        applyTheme(newTheme);
+                    });
+                }
+            });
+            </script>
 
             <!-- Page content -->
             <main class="admin-page-body">

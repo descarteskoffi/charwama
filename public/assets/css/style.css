@@ -109,9 +109,46 @@
 
 [data-theme="light"] .form-control,
 [data-theme="light"] select.form-control,
-[data-theme="light"] select.form-control option {
+[data-theme="light"] select.form-control option,
+[data-theme="light"] .search-bar input {
     color: #1c1a1e;
     background-color: #f2efe9;
+}
+
+[data-theme="light"] .search-bar {
+    background-color: #f2efe9;
+    border-color: rgba(28, 26, 30, 0.12);
+}
+
+[data-theme="light"] .search-bar i {
+    color: #7b7880;
+}
+
+[data-theme="light"] .admin-table th {
+    background-color: #f2efe9;
+    color: #1c1a1e;
+}
+
+[data-theme="light"] .admin-table td {
+    color: #47444c;
+}
+
+[data-theme="light"] .badge-inactive {
+    background-color: #e5e5e5;
+    color: #47444c;
+}
+
+[data-theme="light"] .stat-card-val {
+    color: #1c1a1e;
+}
+
+[data-theme="light"] .stat-card-details h4 {
+    color: #7b7880;
+}
+
+[data-theme="light"] .table-card {
+    background-color: #ffffff;
+    border-color: rgba(28, 26, 30, 0.08);
 }
 
 [data-theme="light"] .footer-section-title {
@@ -1703,7 +1740,7 @@ input[type="checkbox"]:checked + .option-checkbox i {
     padding: 16px 24px;
     font-family: var(--font-titles);
     font-weight: 600;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1712,7 +1749,7 @@ input[type="checkbox"]:checked + .option-checkbox i {
 .admin-table td {
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-color);
-    color: #e2e2e6;
+    color: var(--text-body);
     vertical-align: middle;
 }
 
@@ -2258,9 +2295,5 @@ input[type="checkbox"]:checked + .option-checkbox i {
     .footer-bottom {
         flex-direction: column;
         text-align: center;
-    }
-}
- 180px;
-        object-fit: cover;
     }
 }

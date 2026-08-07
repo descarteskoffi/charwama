@@ -418,16 +418,25 @@ class AdminController extends Controller {
             $post = $this->getPostData();
 
             if (!isset($post['csrf_token']) || !$this->verifyCsrfToken($post['csrf_token'])) {
-                die("Erreur CSRF");
+                $_SESSION['error_msg'] = "Erreur de sécurité (CSRF). Veuillez réessayer.";
+                $this->redirect('/admin/categories');
             }
 
-            $nom = trim($post['nom']);
-            $ordre = (int)$post['ordre'];
+            $nom = isset($post['nom']) ? trim($post['nom']) : '';
+            $ordre = isset($post['ordre']) ? (int)$post['ordre'] : 0;
             $statut = isset($post['statut']) ? 1 : 0;
 
             if (!empty($nom)) {
-                $this->categoryModel->add($nom, $ordre, $statut);
-                $_SESSION['success_msg'] = "La catégorie '{$nom}' a été créée avec succès.";
+                try {
+                    $result = $this->categoryModel->add($nom, $ordre, $statut);
+                    if ($result) {
+                        $_SESSION['success_msg'] = "La catégorie '" . htmlspecialchars($nom) . "' a été créée avec succès.";
+                    } else {
+                        $_SESSION['error_msg'] = "Impossible de créer la catégorie dans la base de données.";
+                    }
+                } catch (Exception $e) {
+                    $_SESSION['error_msg'] = "Erreur lors de la création de la catégorie : " . $e->getMessage();
+                }
             } else {
                 $_SESSION['error_msg'] = "Veuillez renseigner un nom de catégorie.";
             }
@@ -437,27 +446,36 @@ class AdminController extends Controller {
 
     public function editCategory($id) {
         $this->checkSessionTimeout();
+        $id = (int)$id;
         $category = $this->categoryModel->getById($id);
 
         if (!$category) {
+            $_SESSION['error_msg'] = "Catégorie introuvable.";
             $this->redirect('/admin/categories');
         }
+
+        $error = '';
 
         if ($this->isPost()) {
             $post = $this->getPostData();
 
             if (!isset($post['csrf_token']) || !$this->verifyCsrfToken($post['csrf_token'])) {
-                die("Erreur CSRF");
+                $_SESSION['error_msg'] = "Erreur de sécurité (CSRF). Veuillez réessayer.";
+                $this->redirect('/admin/categories');
             }
 
-            $nom = trim($post['nom']);
-            $ordre = (int)$post['ordre'];
+            $nom = isset($post['nom']) ? trim($post['nom']) : '';
+            $ordre = isset($post['ordre']) ? (int)$post['ordre'] : 0;
             $statut = isset($post['statut']) ? 1 : 0;
 
             if (!empty($nom)) {
-                $this->categoryModel->update($id, $nom, $ordre, $statut);
-                $_SESSION['success_msg'] = "La catégorie a été modifiée avec succès.";
-                $this->redirect('/admin/categories');
+                try {
+                    $this->categoryModel->update($id, $nom, $ordre, $statut);
+                    $_SESSION['success_msg'] = "La catégorie a été modifiée avec succès.";
+                    $this->redirect('/admin/categories');
+                } catch (Exception $e) {
+                    $error = "Erreur lors de la modification : " . $e->getMessage();
+                }
             } else {
                 $error = "Le nom ne peut pas être vide.";
             }
@@ -469,7 +487,7 @@ class AdminController extends Controller {
             'activePage' => 'categories',
             'category' => $category,
             'csrfToken' => $csrfToken,
-            'error' => $error ?? ''
+            'error' => $error
         ];
 
         $this->render('admin/categories/edit', $data);
@@ -478,10 +496,15 @@ class AdminController extends Controller {
     public function deleteCategory($id) {
         $this->checkSessionTimeout();
         
+        $id = (int)$id;
         $category = $this->categoryModel->getById($id);
         if ($category) {
-            $this->categoryModel->delete($id);
-            $_SESSION['success_msg'] = "La catégorie a été supprimée.";
+            try {
+                $this->categoryModel->delete($id);
+                $_SESSION['success_msg'] = "La catégorie a été supprimée.";
+            } catch (Exception $e) {
+                $_SESSION['error_msg'] = "Impossible de supprimer cette catégorie car elle est utilisée par des produits.";
+            }
         }
         $this->redirect('/admin/categories');
     }
