@@ -989,6 +989,11 @@ function openRecapModal() {
     const modal = document.getElementById('orderRecapModal');
     if (modal) {
         modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.style.opacity = '1';
+            modal.style.pointerEvents = 'auto';
+            modal.classList.add('active');
+        }, 10);
         document.body.style.overflow = 'hidden';
     }
 }
@@ -996,16 +1001,37 @@ function openRecapModal() {
 function closeRecapModal() {
     const modal = document.getElementById('orderRecapModal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 250);
         document.body.style.overflow = '';
     }
 }
+
+// Permettre la fermeture du récapitulatif en cliquant sur le fond noir
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('orderRecapModal');
+    if (modal && e.target === modal) {
+        closeRecapModal();
+    }
+});
 
 /**
  * Étape 2 : Confirmer, enregistrer en BDD, puis rediriger vers WhatsApp
  */
 async function confirmAndSubmitOrder() {
     if (!pendingOrderData) return;
+
+    // 1. Pré-ouvrir un onglet vierge immédiatement sur le clic utilisateur (évite tout blocage anti-popup sur PC/mobile)
+    let waWindow = null;
+    try {
+        waWindow = window.open('about:blank', '_blank');
+    } catch (e) {
+        waWindow = null;
+    }
 
     const confirmBtn = document.getElementById('recapConfirmBtn');
     if (confirmBtn) {
@@ -1015,7 +1041,12 @@ async function confirmAndSubmitOrder() {
 
     const data = pendingOrderData;
 
-    // ---- 1. Enregistrement en base de données via l'API AJAX ----
+    // Récupérer l'URL racine de manière sécurisée
+    const baseUrl = (typeof window.DYNAMIC_URLROOT !== 'undefined' && window.DYNAMIC_URLROOT)
+        ? window.DYNAMIC_URLROOT
+        : ((typeof DYNAMIC_URLROOT !== 'undefined') ? DYNAMIC_URLROOT : '');
+
+    // ---- 2. Enregistrement en base de données via l'API AJAX ----
     let numeroCommande = null;
     try {
         const payload = {
@@ -1029,27 +1060,27 @@ async function confirmAndSubmitOrder() {
             items: data.cart
         };
 
-        const response = await fetch(DYNAMIC_URLROOT + '/api/commande/creer', {
+        const response = await fetch(baseUrl + '/api/commande/creer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
-
-        if (result.success) {
-            numeroCommande = result.numero_commande;
-        } else {
-            // Avertir mais ne pas bloquer — la commande WhatsApp doit quand même partir
-            console.warn('Erreur BDD:', result.error);
-            showToast('La commande a été envoyée sur WhatsApp, mais n\'a pas pu être enregistrée en base de données.', 'warning', 6000, 'Avertissement');
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                numeroCommande = result.numero_commande;
+            } else {
+                console.warn('Erreur BDD:', result.error);
+                showToast('La commande sera envoyée sur WhatsApp (non enregistrée en BDD).', 'warning', 5000, 'Avertissement');
+            }
         }
     } catch (err) {
         console.error('Erreur réseau lors de l\'enregistrement:', err);
     }
 
-    // ---- 2. Construire le message WhatsApp ----
-    let msg = `*🔥 NOUVELLE COMMANDE — Chawarma Elite*\n`;
+    // ---- 3. Construire le message WhatsApp ----
+    let msg = `*🔥 NOUVELLE COMMANDE — Franco Fast-Food*\n`;
     if (numeroCommande) {
         msg += `*Référence : ${numeroCommande}*\n`;
     }
@@ -1092,26 +1123,29 @@ async function confirmAndSubmitOrder() {
     msg += `--------------------------------------------------\n`;
     msg += `_Merci et à tout de suite en cuisine ! 🍳_`;
 
-    // ---- 3. Ouvrir WhatsApp ----
-    const phone = (typeof RECEIVING_WHATSAPP_PHONE !== 'undefined' && RECEIVING_WHATSAPP_PHONE)
-        ? RECEIVING_WHATSAPP_PHONE
-        : (typeof DEFAULT_PHONE !== 'undefined' ? DEFAULT_PHONE : '');
+    // ---- 4. Obtenir et nettoyer le numéro de téléphone WhatsApp ----
+    let rawPhone = (typeof window.RECEIVING_WHATSAPP_PHONE !== 'undefined' && window.RECEIVING_WHATSAPP_PHONE)
+        ? window.RECEIVING_WHATSAPP_PHONE
+        : ((typeof RECEIVING_WHATSAPP_PHONE !== 'undefined' && RECEIVING_WHATSAPP_PHONE)
+            ? RECEIVING_WHATSAPP_PHONE
+            : ((typeof DEFAULT_PHONE !== 'undefined') ? DEFAULT_PHONE : '2290165090839'));
 
-    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    const cleanPhone = String(rawPhone).replace(/[^0-9]/g, '');
+    const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 
-    // ---- 4. Vider le panier ----
+    // ---- 5. Vider le panier ----
     localStorage.removeItem('chawarma_cart');
     sessionStorage.removeItem('chawarma_detected_table');
     updateCartBadge();
 
-    // ---- 5. Fermer modale et rediriger ----
+    // ---- 6. Fermer modale et rediriger vers WhatsApp ----
     closeRecapModal();
-    window.open(waUrl, '_blank');
 
-    showToast('Votre commande a été envoyée ! Vous allez être redirigé vers WhatsApp.', 'success', 3500, 'Commande envoyée 🎉');
-    setTimeout(() => {
-        window.location.href = (typeof DYNAMIC_URLROOT !== 'undefined' ? DYNAMIC_URLROOT : '') + '/';
-    }, 3600);
+    if (waWindow && !waWindow.closed) {
+        waWindow.location.href = waUrl;
+    } else {
+        window.location.href = waUrl;
+    }
 }
 
 /* =========================================================================

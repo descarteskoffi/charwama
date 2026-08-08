@@ -106,7 +106,7 @@ require APPROOT . '/views/layout/header.php';
 </section>
 
 <!-- Modal Récapitulatif Final -->
-<div id="orderRecapModal" class="modal" role="dialog" aria-hidden="true" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 1000;">
+<div id="orderRecapModal" class="order-recap-modal" role="dialog" aria-hidden="true" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;">
     <div class="form-card" style="background-color: var(--bg-card); width: 90%; max-width: 500px; padding: 32px; border-radius: 12px; border: 2px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
         <h3 style="margin-bottom: 20px; font-family: var(--font-titles); text-align: center; color: var(--primary);">
             <i class="fa-solid fa-file-invoice"></i> Récapitulatif de votre commande
@@ -129,7 +129,8 @@ require APPROOT . '/views/layout/header.php';
 
 <!-- Passer le numéro WhatsApp admin configuré dans la DB au JS -->
 <script>
-    const RECEIVING_WHATSAPP_PHONE = "<?php echo preg_replace('/[^0-9]/', '', $siteSettings['whatsapp_phone'] ?? DEFAULT_PHONE); ?>";
+    var RECEIVING_WHATSAPP_PHONE = "<?php echo preg_replace('/[^0-9]/', '', $siteSettings['whatsapp_phone'] ?? DEFAULT_PHONE); ?>";
+    window.RECEIVING_WHATSAPP_PHONE = RECEIVING_WHATSAPP_PHONE;
 </script>
 
 <?php require APPROOT . '/views/layout/footer.php'; ?>

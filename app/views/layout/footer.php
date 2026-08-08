@@ -117,9 +117,12 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
 
     <!-- Variables JavaScript dynamiques -->
     <script>
-        const DYNAMIC_URLROOT = "<?php echo DYNAMIC_URLROOT; ?>";
-        const RECEIVING_WHATSAPP_PHONE = "<?php echo $cleanPhone; ?>";
-        const DEFAULT_PHONE = "<?php echo $cleanPhone; ?>";
+        var DYNAMIC_URLROOT = "<?php echo DYNAMIC_URLROOT; ?>";
+        var RECEIVING_WHATSAPP_PHONE = (typeof window.RECEIVING_WHATSAPP_PHONE !== 'undefined' && window.RECEIVING_WHATSAPP_PHONE) ? window.RECEIVING_WHATSAPP_PHONE : "<?php echo $cleanPhone; ?>";
+        var DEFAULT_PHONE = "<?php echo $cleanPhone; ?>";
+        window.DYNAMIC_URLROOT = DYNAMIC_URLROOT;
+        window.RECEIVING_WHATSAPP_PHONE = RECEIVING_WHATSAPP_PHONE;
+        window.DEFAULT_PHONE = DEFAULT_PHONE;
     </script>
 
     <!-- JavaScript global -->
