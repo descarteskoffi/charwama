@@ -15,7 +15,7 @@ define('URLROOT', ''); // Laisser vide pour la détection dynamique, ou spécifi
 
 // Informations générales par défaut
 define('SITENAME', 'Franco fast-food');
-define('DEFAULT_PHONE', '2290165090839'); // WhatsApp Bénin avec code pays +229
+define('DEFAULT_PHONE', '2290165090839'); // WhatsApp Bénin +229 0165090839
 
 // Démarrage de la session de manière sécurisée
 if (session_status() === PHP_SESSION_NONE) {
