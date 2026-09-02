@@ -14,7 +14,7 @@ define('APPROOT', dirname(dirname(__FILE__)));
 define('URLROOT', ''); // Laisser vide pour la détection dynamique, ou spécifier (ex: http://localhost/chawarma)
 
 // Informations générales par défaut
-define('SITENAME', 'Franco fast-food');
+define('SITENAME', 'JP-Charwama');
 define('DEFAULT_PHONE', '2290165090839'); // WhatsApp Bénin +229 0165090839
 
 // Démarrage de la session de manière sécurisée

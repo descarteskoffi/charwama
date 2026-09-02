@@ -7,7 +7,7 @@ require APPROOT . '/views/layout/header.php';
 $adresse = $siteSettings['contact_adresse'] ?? '123 Avenue de la Gastronomie, Paris';
 $horaires = $siteSettings['site_horaires'] ?? 'Lun - Dim: 11h30 - 23h30';
 $whatsappPhone = $siteSettings['whatsapp_phone'] ?? DEFAULT_PHONE;
-$email = $siteSettings['contact_email'] ?? 'contact@chawarmapremium.com';
+$email = $siteSettings['contact_email'] ?? 'contact@jpcharwama.com';
 ?>
 
 <!-- En-tête de page -->

@@ -42,7 +42,7 @@ require APPROOT . '/views/layout/admin_header.php';
                     <label class="form-label" for="contact_email">E-mail de Contact</label>
                     <input type="email" id="contact_email" name="contact_email" class="form-control" 
                            value="<?php echo htmlspecialchars($siteSettings['contact_email'] ?? ''); ?>" 
-                           placeholder="Ex: contact@chawarmapremium.com">
+                           placeholder="Ex: contact@jpcharwama.com">
                 </div>
             </div>
 

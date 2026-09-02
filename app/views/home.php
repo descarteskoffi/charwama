@@ -6,7 +6,7 @@ require APPROOT . '/views/layout/header.php';
 
 $heroTitreRaw = $siteSettings['accueil_hero_titre'] ?? '';
 if (empty($heroTitreRaw) || strripos($heroTitreRaw, 'Shawarma') !== false || strripos($heroTitreRaw, 'Chawarma Premium') !== false) {
-    $heroTitre = 'Franco Fast-Food : L\'Expérience Gourmande Ultime !';
+    $heroTitre = 'JP-Charwama : L\'Expérience Gourmande Ultime !';
 } else {
     $heroTitre = $heroTitreRaw;
 }
@@ -18,8 +18,8 @@ if (empty($heroSousTitreRaw) || strripos($heroSousTitreRaw, 'marinades tradition
     $heroSousTitre = $heroSousTitreRaw;
 }
 
-$aProposTitre  = $siteSettings['accueil_a_propos_titre']      ?? 'La passion du goût chez Franco Fast-Food';
-$aProposDesc   = $siteSettings['accueil_a_propos_description'] ?? 'Chez Franco fast-food, nous réinventons la restauration rapide avec des ingrédients frais, des sauces faites maison et un savoir-faire authentique.';
+$aProposTitre  = $siteSettings['accueil_a_propos_titre']      ?? 'La passion du goût chez JP-Charwama';
+$aProposDesc   = $siteSettings['accueil_a_propos_description'] ?? 'Chez JP-Charwama, nous réinventons la restauration rapide avec des ingrédients frais, des sauces faites maison et un savoir-faire authentique.';
 $adresse       = $siteSettings['contact_adresse']              ?? 'Cocotomey, Bénin';
 $horaires      = $siteSettings['site_horaires']                ?? 'Lun - Dim: 11h30 - 23h30';
 $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
@@ -36,7 +36,7 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
     <div class="container hero-grid">
         <!-- Contenu textuel -->
         <div class="hero-content" data-reveal="fade-right">
-            <h1><span class="hero-highlight">Franco Fast-Food</span> : L'Expérience Gourmande Ultime !</h1>
+            <h1><span class="hero-highlight">JP-Charwama</span> : L'Expérience Gourmande Ultime !</h1>
             <p><?php echo htmlspecialchars($heroSousTitre); ?></p>
             <div class="hero-buttons">
                 <a href="<?php echo DYNAMIC_URLROOT; ?>/menu" class="btn btn-primary" id="heroCTAPrimary">
@@ -59,14 +59,14 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
                    muted 
                    playsinline 
                    preload="auto"
-                   aria-label="Vidéo de présentation des produits Franco Fast-Food"></video>
+                   aria-label="Vidéo de présentation des produits JP-Charwama"></video>
             <video id="heroVideo2" 
                    src="<?php echo DYNAMIC_URLROOT; ?>/assets/video/hamburger.mp4" 
                    class="hero-video" 
                    muted 
                    playsinline 
                    preload="auto"
-                   aria-label="Vidéo de présentation des produits Franco Fast-Food"></video>
+                   aria-label="Vidéo de présentation des produits JP-Charwama"></video>
         </div>
     </div>
 </section>
@@ -194,7 +194,7 @@ $whatsappPhone = $siteSettings['whatsapp_phone']               ?? DEFAULT_PHONE;
     <div class="container about-teaser-grid">
         <div class="about-teaser-img" data-reveal="fade-right">
             <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=60"
-                 alt="Cuisine artisanale au restaurant Franco Fast-Food"
+                 alt="Cuisine artisanale au restaurant JP-Charwama"
                  loading="lazy"
                  onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=60';">
         </div>

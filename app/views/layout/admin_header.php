@@ -3,7 +3,7 @@
  * Layout administration - En-tête (Admin Header)
  */
 $activePage = $activePage ?? '';
-$title = $title ?? 'Administration - Franco fast-food';
+$title = $title ?? 'Administration - JP-Charwama';
 $adminName = $_SESSION['admin_name'] ?? 'Administratrice';
 ?>
 <!DOCTYPE html>
@@ -36,7 +36,7 @@ $adminName = $_SESSION['admin_name'] ?? 'Administratrice';
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
                 <a href="<?php echo DYNAMIC_URLROOT; ?>/admin/dashboard" class="nav-brand" style="font-size: 1.25rem;">
-                    <i class="fa-solid fa-fire-burner"></i> Franco<span>FastFood</span>
+                    <i class="fa-solid fa-fire-burner"></i> JP-<span>Charwama</span>
                 </a>
             </div>
             <ul class="admin-menu">

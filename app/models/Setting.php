@@ -14,7 +14,14 @@ class Setting extends Model {
         
         $settings = [];
         foreach ($results as $row) {
-            $settings[$row['cle']] = $row['valeur'];
+            $val = $row['valeur'];
+            // Remplacer automatiquement les anciennes références franco fast-food par JP-Charwama
+            $val = str_ireplace(
+                ['contact@francofastfood.com', 'https://facebook.com/francofastfood', 'https://instagram.com/francofastfood', 'Franco Fast-Food', 'Franco fast-food'],
+                ['contact@jpcharwama.com', 'https://facebook.com/jpcharwama', 'https://instagram.com/jpcharwama', 'JP-Charwama', 'JP-Charwama'],
+                $val
+            );
+            $settings[$row['cle']] = $val;
         }
         return $settings;
     }

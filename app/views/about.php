@@ -23,7 +23,7 @@ $aProposDesc = $siteSettings['accueil_a_propos_description'] ?? 'Depuis 2020, no
             <h2 style="font-size: 2rem; margin-bottom: 24px; color: var(--primary);"><?php echo htmlspecialchars($aProposTitre); ?></h2>
             <p style="font-size: 1.05rem; line-height: 1.7; margin-bottom: 20px;"><?php echo nl2br(htmlspecialchars($aProposDesc)); ?></p>
             <p style="color: #a0a0a5; margin-bottom: 20px;">
-                Chez <strong>Franco fast-food</strong>, notre vision de la restauration rapide est simple : allier rapidité et excellence gustative. Chaque jour, nos chefs découpent et préparent les broches de viande, marinent le poulet avec un bouquet d'épices soigneusement sélectionnées, et pétrissent notre sauce à l'ail maison pour relever vos sandwichs.
+                Chez <strong>JP-Charwama</strong>, notre vision de la restauration rapide est simple : allier rapidité et excellence gustative. Chaque jour, nos chefs découpent et préparent les broches de viande, marinent le poulet avec un bouquet d'épices soigneusement sélectionnées, et pétrissent notre sauce à l'ail maison pour relever vos sandwichs.
             </p>
             <p style="color: #a0a0a5;">
                 Que vous soyez fan de panini fondant, amateur de sandwichs généreux ou passionné de chawarmas roulés dans leur pain libanais, vous trouverez votre bonheur dans nos recettes authentiques élaborées pour vous satisfaire à chaque bouchée.

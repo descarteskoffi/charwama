@@ -189,5 +189,5 @@ Le tableau de bord affiche les dernières connexions réussies et échouées, pe
 
 ---
 
-*Guide rédigé pour Franco fast-food — Version 1.0*  
+*Guide rédigé pour JP-Charwama — Version 1.0*  
 *En cas de problème technique, contactez votre développeur.*

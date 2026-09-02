@@ -4,8 +4,8 @@
    1. VARIABLES & DESIGN SYSTEM
    ========================================================================= */
 :root {
-    /* Color Palette — Orange Franco Fast-Food (couleur primaire unique) */
-    --primary: #ff6b08;           /* Orange signature Franco */
+    /* Color Palette — Orange JP-Charwama (couleur primaire unique) */
+    --primary: #ff6b08;           /* Orange signature JP-Charwama */
     --primary-hover: #e05a00;     /* Orange foncé au survol */
     --primary-rgb: 255, 107, 8;   /* Canaux RGB pour les opacités */
     --primary-light: rgba(var(--primary-rgb), 0.15);

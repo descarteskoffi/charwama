@@ -3,27 +3,27 @@
  * Layout commun - En-tête (Header)
  */
 $activePage = $activePage ?? '';
-$title = $title ?? 'Franco fast-food';
+$title = $title ?? 'JP-Charwama';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($title); ?> — Franco fast-food | Commander sur WhatsApp</title>
+    <title><?php echo htmlspecialchars($title); ?> — JP-Charwama | Commander sur WhatsApp</title>
 
     <!-- Favicon Fast-Food -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍔</text></svg>">
 
     <!-- Meta SEO -->
-    <meta name="description" content="Découvrez le menu de Franco fast-food : chawarmas juteux, paninis croustillants et sandwichs gourmands. Commandez facilement via WhatsApp !">
+    <meta name="description" content="Découvrez le menu de JP-Charwama : chawarmas juteux, paninis croustillants et sandwichs gourmands. Commandez facilement via WhatsApp !">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#ff6b08">
 
     <!-- Open Graph / Réseaux sociaux -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="<?php echo htmlspecialchars($title); ?> — Franco fast-food">
-    <meta property="og:description" content="Franco fast-food - Chawarma, paninis et sandwichs artisanaux. Commandez maintenant via WhatsApp !">
+    <meta property="og:title" content="<?php echo htmlspecialchars($title); ?> — JP-Charwama">
+    <meta property="og:description" content="JP-Charwama - Chawarma, paninis et sandwichs artisanaux. Commandez maintenant via WhatsApp !">
     <meta property="og:locale" content="fr_FR">
 
     <!-- Préchargement des polices pour performance -->
@@ -59,7 +59,7 @@ $title = $title ?? 'Franco fast-food';
     <div id="pageLoader" aria-hidden="true">
         <div class="loader-logo">
             <i class="fa-solid fa-fire-burner"></i>
-            Franco <span>fast-food</span>
+            JP-<span>Charwama</span>
         </div>
         <div class="loader-spinner"></div>
     </div>
@@ -71,9 +71,9 @@ $title = $title ?? 'Franco fast-food';
     <nav class="navbar" role="navigation" aria-label="Navigation principale">
         <div class="container navbar-container">
             <!-- Logo / Marque -->
-            <a href="<?php echo DYNAMIC_URLROOT; ?>/" class="nav-brand" aria-label="Franco fast-food - Accueil">
+            <a href="<?php echo DYNAMIC_URLROOT; ?>/" class="nav-brand" aria-label="JP-Charwama - Accueil">
                 <i class="fa-solid fa-fire-burner" aria-hidden="true"></i>
-                <span class="nav-brand-text">Franco <span>fast-food</span></span>
+                <span class="nav-brand-text">JP-<span>Charwama</span></span>
             </a>
 
             <!-- Menu de Navigation -->

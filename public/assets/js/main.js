@@ -1,5 +1,5 @@
 /**
- * main.js — Script Principal Franco fast-food
+ * main.js — Script Principal JP-Charwama
  * Version 2.0 : Persistance des commandes en BDD, Gestion des tables/QR codes,
  *                Vérification d'ouverture, Récapitulatif de commande amélioré
  *
@@ -1080,7 +1080,7 @@ async function confirmAndSubmitOrder() {
     }
 
     // ---- 3. Construire le message WhatsApp ----
-    let msg = `*🔥 NOUVELLE COMMANDE — Franco Fast-Food*\n`;
+    let msg = `*🔥 NOUVELLE COMMANDE — JP-Charwama*\n`;
     if (numeroCommande) {
         msg += `*Référence : ${numeroCommande}*\n`;
     }

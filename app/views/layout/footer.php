@@ -18,7 +18,7 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
             <!-- Colonne 1 : Description -->
             <div data-reveal="fade-up">
                 <div class="footer-brand">
-                    <i class="fa-solid fa-fire-burner" aria-hidden="true"></i> Franco<span>fast-food</span>
+                    <i class="fa-solid fa-fire-burner" aria-hidden="true"></i> JP-<span>Charwama</span>
                 </div>
                 <p class="footer-desc">
                     L'excellence du fast-food artisanal préparé avec des produits frais et des ingrédients de qualité.
@@ -80,7 +80,7 @@ $waText = rawurlencode("Bonjour, je souhaite consulter votre carte et commander 
         </div>
 
         <div class="container footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Franco fast-food. Tous droits réservés.</p>
+            <p>&copy; <?php echo date('Y'); ?> JP-Charwama. Tous droits réservés.</p>
         </div>
     </footer>
 

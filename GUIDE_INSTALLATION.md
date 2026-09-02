@@ -1,4 +1,4 @@
-# 📚 Guide d'Installation — Franco fast-food
+# 📚 Guide d'Installation — JP-Charwama
 
 ## Prérequis techniques
 
@@ -206,4 +206,4 @@ Pour mettre à jour le site :
 
 ---
 
-*Guide rédigé pour Franco fast-food — Version 1.0*
+*Guide rédigé pour JP-Charwama — Version 1.0*
